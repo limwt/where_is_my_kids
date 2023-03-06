@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">WIMK</string>
+    <string name="app_name">WhereIsMyKids</string>
+    <string name="text_no_register">등록된 자녀가 없습니다.</string>
+    <string name="text_register">부모, 자녀 중 선택해 주세요.</string>
+    <string name="text_register_parent">부모</string>
+    <string name="text_register_children">자녀</string>
+    <string name="text_register_parent_relation">관계</string>
+    <string name="text_phone_number">전화번호</string>
+    <string name="text_register_parent_hint">엄마/아빠/아들/딸</string>
+    <string name="button_save_text">저장</string>
+    <string name="button_cancel_text">취소</string>
 </resources>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "501208553049",
+    "project_id": "wimk-d521d",
+    "storage_bucket": "wimk-d521d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501208553049:android:f3c5a98c798021585c4348",
+        "android_client_info": {
+          "package_name": "com.jeff.lim.wimk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "501208553049-jt7au2at4aor6n6g4ue0lpj3d6d59ra8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnqx6etjeG8wCnuQ7SC1NlItPkwnqeGY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "501208553049-jt7au2at4aor6n6g4ue0lpj3d6d59ra8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
