@@ -1,6 +1,5 @@
 package com.jeff.lim.wimk.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,12 +8,11 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.jeff.lim.wimk.database.DataBaseInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class FirebaseTokenViewModel @Inject constructor(@ApplicationContext private val context: Context) : ViewModel() {
+class FirebaseTokenViewModel @Inject constructor() : ViewModel() {
     private val logTag = "[WIMK]${this::class.java.simpleName}"
     private val _tokenData = MutableLiveData<Any>(null)
     val getTokenData: LiveData<Any?> get() = _tokenData

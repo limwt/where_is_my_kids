@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
             // If true, token is already existed.
             fireBaseTokenViewModel.updateAndroidId(getAndroidId())
 
-            if (firebaseTokenManager.registerTokenManager(getAndroidId())) {
+            if (firebaseTokenManager.registerTokenManager()) {
                 RegisterMainView(fireBaseTokenViewModel)
             }
         }
@@ -92,5 +92,5 @@ fun MapView() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    RegisterMainView()
+    RegisterMainView(FirebaseTokenViewModel())
 }

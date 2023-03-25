@@ -17,7 +17,7 @@ import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import com.jeff.lim.wimk.viewmodel.FirebaseTokenViewModel
 
 @Composable
-fun RegisterMainView(viewModel: FirebaseTokenViewModel) {
+fun RegisterMainView(viewModel: FirebaseTokenViewModel = FirebaseTokenViewModel()) {
     WIMKTheme {
         Scaffold(
             Modifier.fillMaxSize()
@@ -175,5 +175,5 @@ fun NoRegisterView(padding: PaddingValues, viewModel: FirebaseTokenViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterMainView()
+    RegisterMainView(FirebaseTokenViewModel())
 }
