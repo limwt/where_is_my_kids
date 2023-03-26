@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class FirebaseTokenManager @Inject constructor(@ApplicationContext private val context: Context) {
     private val logTag = "[WIMK]${this::class.java.simpleName}"
-    private val path = "${DataBaseInfo.WIMK.name}/${getAndroidId()}/${DataBaseInfo.Tokens.name}"
+    private val path = DataBaseInfo.WIMK.name
 
     /**
      * 해당 디바이스의 Token을 받아옵니다.

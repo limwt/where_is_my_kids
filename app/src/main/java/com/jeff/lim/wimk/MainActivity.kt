@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jeff.lim.wimk.manager.FirebaseTokenManager
+import com.jeff.lim.wimk.manager.ScreenManager
 import com.jeff.lim.wimk.screen.RegisterMainView
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import com.jeff.lim.wimk.viewmodel.FirebaseTokenViewModel
@@ -35,6 +36,7 @@ class MainActivity : ComponentActivity() {
     private val logTag = "[WIMK]${this::class.java.simpleName}"
     private val fireBaseTokenViewModel: FirebaseTokenViewModel by viewModels()
     @Inject lateinit var firebaseTokenManager: FirebaseTokenManager
+    @Inject lateinit var screenModel: ScreenManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
