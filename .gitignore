@@ -1,8 +1,6 @@
 # Built application files
 *.apk
-*.aar
 *.ap_
-*.aab
 
 # Files for the ART/Dalvik VM
 *.dex
@@ -11,11 +9,12 @@
 *.class
 
 # Generated files
+.DS_Store
 bin/
-gen/
-out/
-#  Uncomment the following line in case you need and you don't have the release build type files in your app
-# release/
+sdk/gen-src/
+sdk/.DS_Store
+sdk/src/.DS_Store
+sdk/src/main/.DS_Store
 
 # Gradle files
 .gradle/
@@ -36,33 +35,30 @@ proguard/
 # Android Studio captures folder
 captures/
 
+
 # IntelliJ
 *.iml
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/gradle.xml
 .idea/assetWizardSettings.xml
+.idea/misc.xml
 .idea/dictionaries
 .idea/libraries
-# Android Studio 3 in .gitignore file.
 .idea/caches
-.idea/modules.xml
-# Comment next line if keeping position of elements in Navigation Editor is relevant for you
-.idea/navEditor.xml
-.idea/.gitignore
+.idea/.name
+.idea/
 
 
 # Keystore files
-# Uncomment the following lines if you do not want to check your keystore files in.
+# Uncomment the following line if you do not want to check your keystore files in.
 #*.jks
-#*.keystore
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
-.cxx/
 
 # Google Services (e.g. APIs or Firebase)
-# google-services.json
+google-services.json
 
 # Freeline
 freeline.py
@@ -76,12 +72,12 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
 
-# Version control
-vcs.xml
+# eic-credential
+sdk/src/main/res/raw/eic_agent_sdk_credentials.json
+sample/app/src/main/res/raw/eic_agent_sdk_credentials.json
+sdk/src/test/resources/eic_agent_sdk_credentials.json
+sample/app/libs/sdk-release.aar
 
-# lint
-lint/intermediates/
-lint/generated/
-lint/outputs/
-lint/tmp/
-# lint/reports/
+# script
+deploy_sdk.sh
+deploy_sdk_to_app.sh
