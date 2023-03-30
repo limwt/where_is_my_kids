@@ -3,10 +3,16 @@ package com.jeff.lim.wimk.service
 import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.jeff.lim.wimk.manager.FirebaseTokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class WIMKFirebaseInstanceIdService : FirebaseMessagingService() {
+    private val logTag = "[WIMK]${this::class.java.simpleName}"
+    @Inject lateinit var firebaseTokenManager: FirebaseTokenManager
+
     override fun getStartCommandIntent(originalIntent: Intent?): Intent {
         return super.getStartCommandIntent(originalIntent)
     }
@@ -33,5 +39,7 @@ class WIMKFirebaseInstanceIdService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        Timber.tag(logTag).d("token: $token")
+        firebaseTokenManager.token = token
     }
 }

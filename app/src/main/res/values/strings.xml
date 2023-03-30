@@ -4,10 +4,11 @@
     <string name="text_register">부모, 자녀 중 선택해 주세요.</string>
     <string name="text_register_parent">부모</string>
     <string name="text_register_children">자녀</string>
-    <string name="text_register_parent_relation">관계</string>
+    <string name="text_register_relation">관계</string>
     <string name="text_phone_number">전화번호</string>
     <string name="text_register_parent_hint">엄마/아빠/아들/딸</string>
     <string name="button_save_text">저장</string>
     <string name="button_cancel_text">취소</string>
     <string name="text_not_connected_network">네트워크 연결 상태를 확인해 주세요.</string>
+    <string name="text_no_relation">관계(부모/자녀) 미지정</string>
 </resources>
