@@ -18,18 +18,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 
 @Composable
-fun NoRegisterScreen() {
+fun NoRegisterScreen(navController: NavController) {
     WIMKTheme {
         Column(modifier = Modifier.fillMaxSize()) {
             Text(
                 text = stringResource(id = R.string.text_register),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 50.dp),
+                    .padding(top = 100.dp),
                 fontSize = 25.sp
             )
 
@@ -40,7 +42,10 @@ fun NoRegisterScreen() {
 
             Button(
                 onClick = {
-                    /* TODO */
+                    navController.navigate(ScreenType.RegisterParentScreen.name) {
+                        // TODO : 등록완료된 화면으로 이동...
+                        launchSingleTop = true
+                    }
                 },
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(3.dp, Color.Black),
@@ -62,7 +67,9 @@ fun NoRegisterScreen() {
             )
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    // TODO : ChildRegisterScreen 으로 이동...
+                },
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(3.dp, Color.Black),
                 colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
@@ -83,5 +90,6 @@ fun NoRegisterScreen() {
 @Preview(showBackground = true)
 @Composable
 fun NoRegisterScreenPreview() {
-    NoRegisterScreen()
+    val navController = rememberNavController()
+    NoRegisterScreen(navController)
 }

@@ -10,20 +10,25 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.manager.FirebaseTokenManager
 import com.jeff.lim.wimk.manager.ScreenManager
-import com.jeff.lim.wimk.screen.RegisterMainView
+import com.jeff.lim.wimk.screen.RegisterParentScreen
+import com.jeff.lim.wimk.screen.RegisterScreen
+import com.jeff.lim.wimk.screen.ScreenType
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import com.jeff.lim.wimk.viewmodel.FirebaseTokenViewModel
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
@@ -36,25 +41,69 @@ class MainActivity : ComponentActivity() {
     private val logTag = "[WIMK]${this::class.java.simpleName}"
     private val fireBaseTokenViewModel: FirebaseTokenViewModel by viewModels()
     @Inject lateinit var firebaseTokenManager: FirebaseTokenManager
-    @Inject lateinit var screenModel: ScreenManager
-
+    @Inject lateinit var screenManager: ScreenManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Create token
-            // If true, token is already existed.
+            //Generate android unique ID
             fireBaseTokenViewModel.updateAndroidId(getAndroidId())
-
-            if (firebaseTokenManager.registerTokenManager()) {
-                RegisterMainView(fireBaseTokenViewModel)
-            }
+            ShowScreen(screenManager)
         }
     }
 
     @SuppressLint("HardwareIds")
     private fun getAndroidId() = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 }
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun WIMKApp(content: @Composable () -> Unit) {
+    WIMKTheme {
+        val scope = rememberCoroutineScope()
+        val scaffoldState = rememberScaffoldState()
+        
+        Scaffold(topBar = {
+            TopAppBar(
+                backgroundColor = Color.Gray,
+                elevation = 5.dp,
+                title = { Text(text = "TEST") },
+                navigationIcon = {
+
+                },
+                actions = {
+
+                }
+            )
+        }) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun ShowScreen(screenManager: ScreenManager) {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = ScreenType.RegisterScreen.name
+    ) {
+        composable(ScreenType.RegisterScreen.name) {
+            //Text(text = ScreenType.RegisterScreen.name)
+            RegisterScreen(navController = navController, screenManager = screenManager)
+        }
+        composable(ScreenType.RegisterParentScreen.name) {
+            RegisterParentScreen(navController = navController)
+        }
+
+        // TODO: 다른 두개의 화면을 추가하자
+    }
+}
+
+
+
+
 
 @Composable
 fun FavoritePositionView() {
@@ -94,5 +143,8 @@ fun MapView() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    RegisterMainView(FirebaseTokenViewModel())
+    //RegisterMainView(FirebaseTokenViewModel())
+    val screenManager = ScreenManager(LocalContext.current)
+    screenManager.availableNetwork = true
+    ShowScreen(screenManager)
 }
