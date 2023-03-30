@@ -43,7 +43,6 @@ fun NoRegisterScreen(navController: NavController) {
             Button(
                 onClick = {
                     navController.navigate(ScreenType.RegisterParentScreen.name) {
-                        // TODO : 등록완료된 화면으로 이동...
                         launchSingleTop = true
                     }
                 },
