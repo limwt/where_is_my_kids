@@ -22,9 +22,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
+import com.jeff.lim.wimk.viewmodel.FirebaseTokenViewModel
 
 @Composable
-fun RegisterParentScreen(navController: NavController) {
+fun RegisterParentScreen(navController: NavController, firebaseTokenViewModel: FirebaseTokenViewModel) {
     WIMKTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             var phoneNumberText by remember { mutableStateOf("") }
@@ -101,8 +102,11 @@ fun RegisterParentScreen(navController: NavController) {
                 ) {
                     Button(
                         onClick = {
-                            //visibleRegisterView = false
-                            //viewModel.requestToken(relationText, phoneNumberText)
+                            val relation = listOf("Parent", "Child")
+                            firebaseTokenViewModel.requestToken(
+                                relation = relation[relationIndex],
+                                phoneNumber = phoneNumberText
+                            )
                         },
                         shape = RoundedCornerShape(20.dp),
                         border = BorderStroke(3.dp, Color.Black),
@@ -111,7 +115,7 @@ fun RegisterParentScreen(navController: NavController) {
                             .width(150.dp)
                             .weight(1.0f)
                             .padding(end = 5.dp),
-                        enabled = phoneNumberText.isNotEmpty()
+                        enabled = relationIndex >= 0 && phoneNumberText.isNotEmpty()
                     ) {
                         Text(
                             text = stringResource(id = R.string.button_save_text),
@@ -218,5 +222,5 @@ fun RadioButton(text: String, selectedValue: String, onSelected: (String) -> Uni
 @Preview(showBackground = true)
 @Composable
 fun RegisterParentScreenPreview() {
-    RegisterParentScreen(rememberNavController())
+    RegisterParentScreen(rememberNavController(), FirebaseTokenViewModel())
 }

@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             //Generate android unique ID
             fireBaseTokenViewModel.updateAndroidId(getAndroidId())
-            ShowScreen(screenManager)
+            ShowScreen(screenManager, fireBaseTokenViewModel)
         }
     }
 
@@ -82,7 +82,7 @@ fun WIMKApp(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun ShowScreen(screenManager: ScreenManager) {
+fun ShowScreen(screenManager: ScreenManager, firebaseTokenViewModel: FirebaseTokenViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -94,7 +94,7 @@ fun ShowScreen(screenManager: ScreenManager) {
             RegisterScreen(navController = navController, screenManager = screenManager)
         }
         composable(ScreenType.RegisterParentScreen.name) {
-            RegisterParentScreen(navController = navController)
+            RegisterParentScreen(navController = navController, firebaseTokenViewModel = firebaseTokenViewModel)
         }
 
         // TODO: 다른 두개의 화면을 추가하자
@@ -146,5 +146,5 @@ fun DefaultPreview() {
     //RegisterMainView(FirebaseTokenViewModel())
     val screenManager = ScreenManager(LocalContext.current)
     screenManager.availableNetwork = true
-    ShowScreen(screenManager)
+    ShowScreen(screenManager, FirebaseTokenViewModel())
 }

@@ -24,7 +24,7 @@ class FirebaseTokenViewModel @Inject constructor() : ViewModel() {
 
     fun requestToken(relation: String, phoneNumber: String) {
         var result = true
-        val path = "${DataBaseInfo.WIMK.name}/$relation/${androidId.value}/${DataBaseInfo.Tokens.name}"
+        val path = "${DataBaseInfo.WIMK.name}/$relation/${DataBaseInfo.Tokens.name}/${androidId.value}/$phoneNumber"
 
         Firebase.database.getReference(path).get().addOnSuccessListener {
             Timber.tag(logTag).d("getToken from Firebase database : ${it.value}")
