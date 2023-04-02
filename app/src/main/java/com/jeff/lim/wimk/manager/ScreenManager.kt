@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -16,6 +18,7 @@ class ScreenManager @Inject constructor(@ApplicationContext context: Context) {
     private val connectivityManager = context.getSystemService(ConnectivityManager::class.java)
 
     var availableNetwork = false
+    var isSignedUp = Firebase.auth.currentUser
 
     init {
         connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {

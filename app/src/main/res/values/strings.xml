@@ -10,5 +10,11 @@
     <string name="button_save_text">저장</string>
     <string name="button_cancel_text">취소</string>
     <string name="text_not_connected_network">네트워크 연결 상태를 확인해 주세요.</string>
-    <string name="text_no_relation">관계(부모/자녀) 미지정</string>
+    <string name="text_no_relation">관계 미지정</string>
+    <string name="text_name">이름</string>
+    <string name="text_password">비밀번호</string>
+    <string name="button_text_login">로그인</string>
+    <string name="button_text_signup">회원 가입</string>
+    <string name="text_email">이메일</string>
+    <string name="text_email_hint">abc@xyz.com</string>
 </resources>

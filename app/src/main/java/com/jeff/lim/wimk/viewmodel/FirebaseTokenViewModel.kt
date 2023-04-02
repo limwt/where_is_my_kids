@@ -3,6 +3,7 @@ package com.jeff.lim.wimk.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -22,9 +23,14 @@ class FirebaseTokenViewModel @Inject constructor() : ViewModel() {
         androidId.value = id
     }
 
-    fun requestToken(relation: String, phoneNumber: String) {
+    fun registerUser(role: String, name: String = "") {
+        val user = Firebase.auth.currentUser
+
+    }
+
+    fun requestToken(role: String, name: String) {
         var result = true
-        val path = "${DataBaseInfo.WIMK.name}/$relation/${DataBaseInfo.Tokens.name}/${androidId.value}/$phoneNumber"
+        val path = "${DataBaseInfo.WIMK.name}/$role/${DataBaseInfo.Tokens.name}/${androidId.value}/$name"
 
         Firebase.database.getReference(path).get().addOnSuccessListener {
             Timber.tag(logTag).d("getToken from Firebase database : ${it.value}")
