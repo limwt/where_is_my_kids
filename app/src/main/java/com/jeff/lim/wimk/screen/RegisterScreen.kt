@@ -21,16 +21,26 @@ import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.database.RoleType
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
-import com.jeff.lim.wimk.viewmodel.FirebaseTokenViewModel
+import com.jeff.lim.wimk.viewmodel.WimkViewModel
 
 @Composable
-fun RegisterScreen(navController: NavController, firebaseTokenViewModel: FirebaseTokenViewModel) {
+fun RegisterScreen(navController: NavController, wimkViewModel: WimkViewModel) {
     WIMKTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
-            var nameText by remember { mutableStateOf("") }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 20.dp, end = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             var dialogState by remember { mutableStateOf(false) }
             var relationIndex by remember { mutableStateOf(-1) }
             val relationList = listOf(RoleType.Mom, RoleType.Dad, RoleType.Son, RoleType.Daughter, RoleType.Other)
+            //val updateUserState by wimkViewModel.updateUser.observeAsState(false)
+
+            /*if (updateUserState) {
+                // 자녀 화면으로 이동...
+            }*/
 
             if (dialogState) {
                 SelectRelationDialog(
@@ -42,111 +52,50 @@ fun RegisterScreen(navController: NavController, firebaseTokenViewModel: Firebas
                 )
             }
 
-            Box(modifier = Modifier.fillMaxSize().padding(top = 100.dp)) {
-                Column(
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(id = R.string.text_register_relation),
+                    fontSize = 25.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+
+                Button(
+                    onClick = { dialogState = !dialogState },
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.TopCenter)
-                        .padding(top = 50.dp, bottom = 50.dp)
-                ) {
-                    Row(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 15.dp, end = 15.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.text_name),
-                            fontSize = 25.sp,
-                            modifier = Modifier.align(Alignment.CenterVertically).padding(start = 50.dp)
-                        )
-
-                        TextField(
-                            value = nameText,
-                            onValueChange = { nameText = it },
-                            modifier = Modifier.fillMaxWidth().padding(start = 50.dp, end = 50.dp)
-                        )
-                    }
-
-                    Divider(
-                        color = Color.Transparent,
-                        thickness = 20.dp
+                        .padding(start = 20.dp)
+                ) {
+                    Text(
+                        text = if (relationIndex == -1) stringResource(id = R.string.text_no_relation) else relationList[relationIndex].name,
+                        fontSize = 20.sp
                     )
-
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 15.dp, end = 15.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.text_register_relation),
-                            fontSize = 25.sp,
-                            modifier = Modifier.align(Alignment.CenterVertically).padding(start = 50.dp)
-                        )
-
-                        Button(
-                            onClick = { dialogState = !dialogState },
-                            colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 50.dp, end = 50.dp)
-                        ) {
-                            Text(
-                                text = if (relationIndex == -1) stringResource(id = R.string.text_no_relation) else relationList[relationIndex].role,
-                                fontSize = 20.sp
-                            )
-                        }
-                    }
                 }
+            }
 
-                Row(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
+            ) {
+                Button(
+                    onClick = {
+                        wimkViewModel.updateUser(relationList[relationIndex].name)
+                    },
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(3.dp, Color.Black),
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(10.dp)
+                        .width(150.dp)
+                        .weight(1.0f)
+                        .padding(end = 5.dp),
+                    enabled = relationIndex >= 0
                 ) {
-                    Button(
-                        onClick = {
-                            firebaseTokenViewModel.requestToken(
-                                role = relationList[relationIndex].name,
-                                name = nameText
-                            )
-                        },
-                        shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(3.dp, Color.Black),
-                        colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
-                        modifier = Modifier
-                            .width(150.dp)
-                            .weight(1.0f)
-                            .padding(end = 5.dp),
-                        enabled = relationIndex >= 0 && nameText.isNotEmpty()
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.button_save_text),
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(horizontal = 30.dp, vertical = 6.dp)
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            navController.navigate(ScreenType.NewRegisterScreen.name) {
-                                popUpTo(ScreenType.NewRegisterScreen.name) {
-                                    inclusive = true
-                                }
-                            }
-                        },
-                        shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(3.dp, Color.Black),
-                        colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
-                        modifier = Modifier
-                            .width(150.dp)
-                            .weight(1.0f)
-                            .padding(start = 5.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.button_cancel_text),
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(horizontal = 30.dp, vertical = 6.dp)
-                        )
-                    }
+                    Text(
+                        text = stringResource(id = R.string.button_save_text),
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 6.dp)
+                    )
                 }
             }
         }
@@ -176,11 +125,11 @@ fun SelectRelationDialog(defaultSelected: Int,
                 )
 
                 LazyColumn {
-                    val list = listOf("부모", "자녀")
+                    val list = listOf(RoleType.Mom, RoleType.Dad, RoleType.Son, RoleType.Daughter, RoleType.Other)
                     itemsIndexed(items = list) { index, item ->
                         RadioButton(
-                            text = item,
-                            selectedValue = if (selectedOption == -1) list[0] else list[selectedOption],
+                            text = item.name,
+                            selectedValue = if (selectedOption == -1) list[0].name else list[selectedOption].name,
                         ) {
                             selectedOption = index
                             onDismissRequest.invoke(index)
@@ -224,6 +173,6 @@ fun RadioButton(text: String, selectedValue: String, onSelected: (String) -> Uni
 @Composable
 fun NoRegisterScreenPreview() {
     val navController = rememberNavController()
-    val viewModel = FirebaseTokenViewModel()
+    val viewModel = WimkViewModel()
     RegisterScreen(navController, viewModel)
 }

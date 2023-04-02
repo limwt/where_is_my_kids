@@ -31,8 +31,8 @@ import com.jeff.lim.wimk.screen.RegisterScreen
 import com.jeff.lim.wimk.screen.ScreenType
 import com.jeff.lim.wimk.screen.UserLogInScreen
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
-import com.jeff.lim.wimk.viewmodel.FirebaseTokenViewModel
 import com.jeff.lim.wimk.viewmodel.UsersViewModel
+import com.jeff.lim.wimk.viewmodel.WimkViewModel
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.NaverMap
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,8 +41,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val logTag = "[WIMK]${this::class.java.simpleName}"
-    private val fireBaseTokenViewModel: FirebaseTokenViewModel by viewModels()
     private val usersViewModel: UsersViewModel by viewModels()
+    private val wimkViewModel: WimkViewModel by viewModels()
 
     @Inject lateinit var firebaseTokenManager: FirebaseTokenManager
     @Inject lateinit var screenManager: ScreenManager
@@ -50,9 +50,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //Generate android unique ID
-            fireBaseTokenViewModel.updateAndroidId(getAndroidId())
-            ShowScreen(screenManager, fireBaseTokenViewModel, usersViewModel)
+            ShowScreen(screenManager, usersViewModel, wimkViewModel)
         }
     }
 
@@ -86,7 +84,7 @@ fun WIMKApp(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun ShowScreen(screenManager: ScreenManager, firebaseTokenViewModel: FirebaseTokenViewModel, usersViewModel: UsersViewModel) {
+fun ShowScreen(screenManager: ScreenManager, usersViewModel: UsersViewModel, wimkViewModel: WimkViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -98,10 +96,10 @@ fun ShowScreen(screenManager: ScreenManager, firebaseTokenViewModel: FirebaseTok
         }
         composable(ScreenType.InitScreen.name) {
             //Text(text = ScreenType.RegisterScreen.name)
-            InitScreen(navController = navController, screenManager = screenManager, firebaseTokenViewModel = firebaseTokenViewModel)
+            InitScreen(navController = navController, screenManager = screenManager, wimkViewModel = wimkViewModel)
         }
         composable(ScreenType.NewRegisterScreen.name) {
-            RegisterScreen(navController = navController, firebaseTokenViewModel = firebaseTokenViewModel)
+            RegisterScreen(navController = navController, wimkViewModel = wimkViewModel)
         }
 
         // TODO: 다른 두개의 화면을 추가하자
@@ -153,5 +151,5 @@ fun DefaultPreview() {
     //RegisterMainView(FirebaseTokenViewModel())
     val screenManager = ScreenManager(LocalContext.current)
     screenManager.availableNetwork = true
-    ShowScreen(screenManager, FirebaseTokenViewModel(), UsersViewModel())
+    ShowScreen(screenManager, UsersViewModel(), WimkViewModel())
 }

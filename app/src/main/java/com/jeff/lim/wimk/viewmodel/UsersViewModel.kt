@@ -47,16 +47,16 @@ class UsersViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun logIn(name: String, email: String, password: String) {
+    fun logIn(name: String, email: String, password: String, onComplete: (Boolean) -> Unit) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { authResult ->
             Timber.tag(logTag).d("logIn result : ${authResult.isSuccessful}")
 
             if (authResult.isSuccessful) {
                 Timber.tag(logTag).d("logIn user : ${auth.currentUser}")
                 // TODO : Preference 저장 및 자동 로그인 기능 추가
-                _authResult.value = true
+                onComplete(true)
             } else {
-                _authResult.value = false
+                onComplete(false)
             }
         }
     }
