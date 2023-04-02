@@ -24,6 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
+import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.manager.FirebaseTokenManager
 import com.jeff.lim.wimk.manager.ScreenManager
 import com.jeff.lim.wimk.screen.InitScreen
@@ -36,6 +43,7 @@ import com.jeff.lim.wimk.viewmodel.WimkViewModel
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.NaverMap
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -50,12 +58,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            setUpWimkRooms()
             ShowScreen(screenManager, usersViewModel, wimkViewModel)
         }
     }
 
     @SuppressLint("HardwareIds")
     private fun getAndroidId() = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+    
+    private fun setUpWimkRooms() {
+        FirebaseDatabase.getInstance().getReference(DBPath.WIMK.path).child(DBPath.Users.path)
+            .orderByChild("uid").equalTo(Firebase.auth.currentUser?.uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (data in snapshot.children) {
+                        Timber.tag(logTag).d("setUp - ${data.key}")
+                    }
+                }
+            })
+    }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
