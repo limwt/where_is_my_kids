@@ -122,7 +122,8 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
 
             Button(
                 onClick = {
-                    userViewModel.signUp(nameText, emailText, passwordText) { result ->
+                    // TODO : 인증 키 입력 칸 추가
+                    userViewModel.signUp("", nameText, emailText, passwordText) { result ->
                         if (result) {
                             userViewModel.checkRole { role ->
                                 when (role) {

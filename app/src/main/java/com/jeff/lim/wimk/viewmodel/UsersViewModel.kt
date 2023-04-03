@@ -3,14 +3,9 @@ package com.jeff.lim.wimk.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.jeff.lim.wimk.database.DBPath
-import com.jeff.lim.wimk.database.RoleType
-import com.jeff.lim.wimk.database.Users
 import com.jeff.lim.wimk.database.WimkModel
 import com.jeff.lim.wimk.di.FirebaseDbRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,25 +23,15 @@ class UsersViewModel @Inject constructor(
 
     // 구글 Firebase 가입을 처리한다.
     // TODO : 추후 카카오톡, 네이버, 구글 계정과 연동한다.
-    fun signUp(name: String, email:String, password: String, onComplete: (Boolean) -> Unit) {
+    fun signUp(key: String = "", name: String, email:String, password: String, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
-            repository.singUp(name, email, password) {
-                onComplete(it)
-            }
+            repository.singUp(key, name, email, password, onComplete)
         }
     }
 
     fun logIn(email: String, password: String, onComplete: (Boolean) -> Unit) {
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { authResult ->
-            Timber.tag(logTag).d("logIn result : ${authResult.isSuccessful}")
-
-            if (authResult.isSuccessful) {
-                Timber.tag(logTag).d("logIn user : ${auth.currentUser}")
-                // TODO : Preference 저장 및 자동 로그인 기능 추가
-                onComplete(true)
-            } else {
-                onComplete(false)
-            }
+        viewModelScope.launch {
+            repository.logIn(email, password, onComplete)
         }
     }
 
@@ -84,26 +69,9 @@ class UsersViewModel @Inject constructor(
     }
 
     fun checkRole(onResult: (String) -> Unit) {
-        firebaseDatabase.getReference(DBPath.WIMK.path)
-            .child(DBPath.Users.path)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    for (dataSnapshot in snapshot.children) {
-                        val users = dataSnapshot.getValue(Users::class.java)
-                        Timber.tag(logTag).d("checkRole : $users")
-
-                        if (users != null) {
-                            onResult(users.role)
-                        } else {
-                            onResult(RoleType.Init.role)
-                        }
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    onResult(RoleType.Init.role)
-                }
-            })
+        viewModelScope.launch {
+            repository.checkRole(onResult)
+        }
     }
 
     private fun updateUserRole(role: String, onComplete: (Boolean) -> Unit) {

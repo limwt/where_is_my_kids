@@ -1,7 +1,6 @@
 package com.jeff.lim.wimk.database
 
 data class WimkModel(
-    val authKey: String = "",
     // Key: User 의 uid
     // Value : User 정보
     val users: MutableMap<String, String> = mutableMapOf(),

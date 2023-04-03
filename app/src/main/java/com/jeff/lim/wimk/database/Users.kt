@@ -6,5 +6,4 @@ data class Users(
     val phoneNumber: String = "",
     val role: String = RoleType.Init.role,
     val email: String = "",
-    val authNum: String = ""
 )
