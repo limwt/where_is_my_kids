@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.database.RoleType
+import com.jeff.lim.wimk.di.FirebaseDbRepository
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import com.jeff.lim.wimk.viewmodel.UsersViewModel
 
@@ -78,7 +79,7 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                                 when (role) {
                                     RoleType.Dad.role,
                                     RoleType.Mom.role -> {
-                                        navController.navigate(ScreenType.KidsListScreen.name) {
+                                        navController.navigate(ScreenType.ParentScreen.name) {
                                             popUpTo(ScreenType.UserLogInScreen.name) {
                                                 inclusive = true
                                             }
@@ -92,14 +93,13 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                                         }
 
                                     }
-                                    /*else -> {
-                                        // TODO : 자녀 화면....
-                                        navController.navigate(ScreenType.KidsListScreen.name) {
-                                            popUpTo(ScreenType.InitScreen.name) {
+                                    else -> {
+                                        navController.navigate(ScreenType.KidScreen.name) {
+                                            popUpTo(ScreenType.UserLogInScreen.name) {
                                                 inclusive = true
                                             }
                                         }
-                                    }*/
+                                    }
                                 }
                             }
                         }
@@ -128,7 +128,7 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                                 when (role) {
                                     RoleType.Dad.role,
                                     RoleType.Mom.role -> {
-                                        navController.navigate(ScreenType.KidsListScreen.name) {
+                                        navController.navigate(ScreenType.ParentScreen.name) {
                                             popUpTo(ScreenType.UserLogInScreen.name) {
                                                 inclusive = true
                                             }
@@ -142,14 +142,13 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                                         }
 
                                     }
-                                    /*else -> {
-                                        // TODO : 자녀 화면....
-                                        navController.navigate(ScreenType.KidsListScreen.name) {
-                                            popUpTo(ScreenType.InitScreen.name) {
+                                    else -> {
+                                        navController.navigate(ScreenType.KidScreen.name) {
+                                            popUpTo(ScreenType.UserLogInScreen.name) {
                                                 inclusive = true
                                             }
                                         }
-                                    }*/
+                                    }
                                 }
                             }
                         }
@@ -177,5 +176,5 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
 @Composable
 fun UserLogInScreenPreview() {
     val navController = rememberNavController()
-    UserLogInScreen(navController = navController, userViewModel = UsersViewModel())
+    UserLogInScreen(navController = navController, userViewModel = UsersViewModel(FirebaseDbRepository()))
 }

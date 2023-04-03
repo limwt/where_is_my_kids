@@ -1,6 +1,7 @@
 package com.jeff.lim.wimk.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -11,12 +12,16 @@ import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.RoleType
 import com.jeff.lim.wimk.database.Users
 import com.jeff.lim.wimk.database.WimkModel
+import com.jeff.lim.wimk.di.FirebaseDbRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class UsersViewModel @Inject constructor() : ViewModel() {
+class UsersViewModel @Inject constructor(
+    private val repository: FirebaseDbRepository
+) : ViewModel() {
     private val logTag = "[WIMK]${this::class.java.simpleName}"
     private val auth = Firebase.auth
     private val firebaseDatabase = FirebaseDatabase.getInstance()
@@ -24,27 +29,10 @@ class UsersViewModel @Inject constructor() : ViewModel() {
     // 구글 Firebase 가입을 처리한다.
     // TODO : 추후 카카오톡, 네이버, 구글 계정과 연동한다.
     fun signUp(name: String, email:String, password: String, onComplete: (Boolean) -> Unit) {
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { authResult ->
-            Timber.tag(logTag).d("signUp result : ${authResult.isSuccessful}")
-            if (authResult.isSuccessful) {
-                try {
-                    auth.currentUser?.let { user ->
-                        Timber.tag(logTag).d("signUp user : $user")
-                        val userId = user.uid
-                        FirebaseDatabase.getInstance().getReference(DBPath.WIMK.path).child(DBPath.Users.path)
-                            .child(userId).setValue(Users(uid = userId, name = name, email = email))
-                    }
-
-                    onComplete(true)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    onComplete(false)
-                }
-            } else {
-                onComplete(false)
+        viewModelScope.launch {
+            repository.singUp(name, email, password) {
+                onComplete(it)
             }
-        }.addOnFailureListener {
-            Timber.tag(logTag).d("signUp fail : ${it.message}")
         }
     }
 
@@ -66,6 +54,13 @@ class UsersViewModel @Inject constructor() : ViewModel() {
         auth.currentUser?.let { user ->
             val wimkModel = WimkModel()
             wimkModel.users[user.uid] = role
+
+            // TODO : DB 에 부모 정보를 확인할 수 있어야 한다.
+            // 부모 정보의 uid 를 이용해서 wimkRoomKey 를 얻고...
+            // 동일한 Room 에 저장한다.
+            // 부모 화면에서 자녀 추가시 인증번호를 생성하여 DB 에 저장하고...
+            // 자녀화면에서 인증 번호를 기반으로 부모 uid 를 얻어 온다.
+
 
             firebaseDatabase.getReference(DBPath.WIMK.path)
                 .child(DBPath.WimkRooms.path).push().setValue(wimkModel).addOnCompleteListener {

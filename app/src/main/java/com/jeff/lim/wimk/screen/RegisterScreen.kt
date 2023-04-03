@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.database.RoleType
+import com.jeff.lim.wimk.di.FirebaseDbRepository
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import com.jeff.lim.wimk.viewmodel.UsersViewModel
 
@@ -79,13 +80,18 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
                             if (result) {
                                 // 현재 기기가 부모이면 등록된 자녀 리스트 화면으로 이동.
                                 if (relationList[relationIndex] == RoleType.Dad || relationList[relationIndex] == RoleType.Mom) {
-                                    navController.navigate(ScreenType.KidsListScreen.name) {
+                                    navController.navigate(ScreenType.ParentScreen.name) {
                                         popUpTo(ScreenType.RegisterScreen.name) {
                                             inclusive = true
                                         }
                                     }
                                 } else {
                                     // TODO : 현재 기기가 자녀이면 부모와 메시지를 주고 받을 수 있는 화면으로 이동.
+                                    navController.navigate(ScreenType.KidScreen.name) {
+                                        popUpTo(ScreenType.RegisterScreen.name) {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -181,6 +187,6 @@ fun RadioButton(text: String, selectedValue: String, onSelected: (String) -> Uni
 @Composable
 fun NoRegisterScreenPreview() {
     val navController = rememberNavController()
-    val viewModel = UsersViewModel()
+    val viewModel = UsersViewModel(FirebaseDbRepository())
     RegisterScreen(navController, viewModel)
 }

@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 
 @Composable
-fun KidsListScreen() {
+fun ParentScreen() {
     WIMKTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -49,8 +49,8 @@ fun KidsInfoCard() {
 
 @Preview(showBackground = true)
 @Composable
-fun KidsListScreenPreview() {
-    KidsListScreen()
+fun ParentScreenPreview() {
+    ParentScreen()
 }
 
 

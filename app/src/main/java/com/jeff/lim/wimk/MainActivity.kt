@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.jeff.lim.wimk.di.FirebaseDbRepository
 import com.jeff.lim.wimk.manager.FirebaseTokenManager
 import com.jeff.lim.wimk.manager.ScreenManager
 import com.jeff.lim.wimk.screen.*
@@ -90,8 +91,11 @@ fun ShowScreen(screenManager: ScreenManager, usersViewModel: UsersViewModel) {
         composable(ScreenType.RegisterScreen.name) {
             RegisterScreen(navController = navController, userViewModel = usersViewModel)
         }
-        composable(ScreenType.KidsListScreen.name) {
-            KidsListScreen()
+        composable(ScreenType.ParentScreen.name) {
+            ParentScreen()
+        }
+        composable(ScreenType.KidScreen.name) {
+            KidScreen()
         }
     }
 }
@@ -141,5 +145,5 @@ fun DefaultPreview() {
     //RegisterMainView(FirebaseTokenViewModel())
     val screenManager = ScreenManager(LocalContext.current)
     screenManager.availableNetwork = true
-    ShowScreen(screenManager, UsersViewModel())
+    ShowScreen(screenManager, UsersViewModel(FirebaseDbRepository()))
 }
