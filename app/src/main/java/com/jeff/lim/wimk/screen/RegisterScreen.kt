@@ -21,10 +21,10 @@ import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.database.RoleType
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
-import com.jeff.lim.wimk.viewmodel.WimkViewModel
+import com.jeff.lim.wimk.viewmodel.UsersViewModel
 
 @Composable
-fun RegisterScreen(navController: NavController, wimkViewModel: WimkViewModel) {
+fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) {
     WIMKTheme {
         Column(
             modifier = Modifier
@@ -36,11 +36,6 @@ fun RegisterScreen(navController: NavController, wimkViewModel: WimkViewModel) {
             var dialogState by remember { mutableStateOf(false) }
             var relationIndex by remember { mutableStateOf(-1) }
             val relationList = listOf(RoleType.Mom, RoleType.Dad, RoleType.Son, RoleType.Daughter, RoleType.Other)
-            //val updateUserState by wimkViewModel.updateUser.observeAsState(false)
-
-            /*if (updateUserState) {
-                // 자녀 화면으로 이동...
-            }*/
 
             if (dialogState) {
                 SelectRelationDialog(
@@ -67,7 +62,7 @@ fun RegisterScreen(navController: NavController, wimkViewModel: WimkViewModel) {
                         .padding(start = 20.dp)
                 ) {
                     Text(
-                        text = if (relationIndex == -1) stringResource(id = R.string.text_no_relation) else relationList[relationIndex].name,
+                        text = if (relationIndex == -1) stringResource(id = R.string.text_no_relation) else relationList[relationIndex].role,
                         fontSize = 20.sp
                     )
                 }
@@ -80,7 +75,20 @@ fun RegisterScreen(navController: NavController, wimkViewModel: WimkViewModel) {
             ) {
                 Button(
                     onClick = {
-                        wimkViewModel.updateUser(relationList[relationIndex].name)
+                        userViewModel.updateUser(relationList[relationIndex].role) { result ->
+                            if (result) {
+                                // 현재 기기가 부모이면 등록된 자녀 리스트 화면으로 이동.
+                                if (relationList[relationIndex] == RoleType.Dad || relationList[relationIndex] == RoleType.Mom) {
+                                    navController.navigate(ScreenType.KidsListScreen.name) {
+                                        popUpTo(ScreenType.RegisterScreen.name) {
+                                            inclusive = true
+                                        }
+                                    }
+                                } else {
+                                    // TODO : 현재 기기가 자녀이면 부모와 메시지를 주고 받을 수 있는 화면으로 이동.
+                                }
+                            }
+                        }
                     },
                     shape = RoundedCornerShape(20.dp),
                     border = BorderStroke(3.dp, Color.Black),
@@ -128,8 +136,8 @@ fun SelectRelationDialog(defaultSelected: Int,
                     val list = listOf(RoleType.Mom, RoleType.Dad, RoleType.Son, RoleType.Daughter, RoleType.Other)
                     itemsIndexed(items = list) { index, item ->
                         RadioButton(
-                            text = item.name,
-                            selectedValue = if (selectedOption == -1) list[0].name else list[selectedOption].name,
+                            text = item.role,
+                            selectedValue = if (selectedOption == -1) list[0].role else list[selectedOption].role,
                         ) {
                             selectedOption = index
                             onDismissRequest.invoke(index)
@@ -173,6 +181,6 @@ fun RadioButton(text: String, selectedValue: String, onSelected: (String) -> Uni
 @Composable
 fun NoRegisterScreenPreview() {
     val navController = rememberNavController()
-    val viewModel = WimkViewModel()
+    val viewModel = UsersViewModel()
     RegisterScreen(navController, viewModel)
 }

@@ -23,6 +23,11 @@ class IntroActivity : ComponentActivity() {
         when {
             permissions.getOrDefault(Manifest.permission.READ_PHONE_STATE, false) -> {
                 Timber.tag(logTag).d("getPermission - READ_PHONE_STATE")
+
+                Intent(this, MainActivity::class.java).also {
+                    startActivity(it)
+                    finish()
+                }
             }
         }
     }
@@ -33,18 +38,14 @@ class IntroActivity : ComponentActivity() {
     }
 
     private fun checkPermissions() {
-        Intent(this, MainActivity::class.java).also {
-            startActivity(it)
-            finish()
-        }
-        /*if (verifyPermissions(this)) {
+        if (verifyPermissions(this)) {
             Intent(this, MainActivity::class.java).also {
                 startActivity(it)
                 finish()
             }
         } else {
             requestPermissions()
-        }*/
+        }
     }
 
     private fun requestPermissions() {

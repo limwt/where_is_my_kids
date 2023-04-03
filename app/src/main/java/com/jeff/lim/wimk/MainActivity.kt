@@ -2,7 +2,6 @@ package com.jeff.lim.wimk
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,22 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
-import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.manager.FirebaseTokenManager
 import com.jeff.lim.wimk.manager.ScreenManager
-import com.jeff.lim.wimk.screen.InitScreen
-import com.jeff.lim.wimk.screen.RegisterScreen
-import com.jeff.lim.wimk.screen.ScreenType
-import com.jeff.lim.wimk.screen.UserLogInScreen
+import com.jeff.lim.wimk.screen.*
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import com.jeff.lim.wimk.viewmodel.UsersViewModel
-import com.jeff.lim.wimk.viewmodel.WimkViewModel
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.NaverMap
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,33 +38,16 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     private val logTag = "[WIMK]${this::class.java.simpleName}"
     private val usersViewModel: UsersViewModel by viewModels()
-    private val wimkViewModel: WimkViewModel by viewModels()
 
     @Inject lateinit var firebaseTokenManager: FirebaseTokenManager
     @Inject lateinit var screenManager: ScreenManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.tag(logTag).d("onCreate")
         setContent {
-            setUpWimkRooms()
-            ShowScreen(screenManager, usersViewModel, wimkViewModel)
+            ShowScreen(screenManager, usersViewModel)
         }
-    }
-
-    @SuppressLint("HardwareIds")
-    private fun getAndroidId() = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-    
-    private fun setUpWimkRooms() {
-        FirebaseDatabase.getInstance().getReference(DBPath.WIMK.path).child(DBPath.Users.path)
-            .orderByChild("uid").equalTo(Firebase.auth.currentUser?.uid)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {}
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    for (data in snapshot.children) {
-                        Timber.tag(logTag).d("setUp - ${data.key}")
-                    }
-                }
-            })
     }
 }
 
@@ -106,7 +77,7 @@ fun WIMKApp(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun ShowScreen(screenManager: ScreenManager, usersViewModel: UsersViewModel, wimkViewModel: WimkViewModel) {
+fun ShowScreen(screenManager: ScreenManager, usersViewModel: UsersViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -116,15 +87,12 @@ fun ShowScreen(screenManager: ScreenManager, usersViewModel: UsersViewModel, wim
         composable(ScreenType.UserLogInScreen.name) {
             UserLogInScreen(navController = navController, userViewModel = usersViewModel)
         }
-        composable(ScreenType.InitScreen.name) {
-            //Text(text = ScreenType.RegisterScreen.name)
-            InitScreen(navController = navController, screenManager = screenManager, wimkViewModel = wimkViewModel)
+        composable(ScreenType.RegisterScreen.name) {
+            RegisterScreen(navController = navController, userViewModel = usersViewModel)
         }
-        composable(ScreenType.NewRegisterScreen.name) {
-            RegisterScreen(navController = navController, wimkViewModel = wimkViewModel)
+        composable(ScreenType.KidsListScreen.name) {
+            KidsListScreen()
         }
-
-        // TODO: 다른 두개의 화면을 추가하자
     }
 }
 
@@ -173,5 +141,5 @@ fun DefaultPreview() {
     //RegisterMainView(FirebaseTokenViewModel())
     val screenManager = ScreenManager(LocalContext.current)
     screenManager.availableNetwork = true
-    ShowScreen(screenManager, UsersViewModel(), WimkViewModel())
+    ShowScreen(screenManager, UsersViewModel())
 }

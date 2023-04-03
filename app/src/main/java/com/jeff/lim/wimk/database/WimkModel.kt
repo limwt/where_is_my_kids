@@ -2,7 +2,7 @@ package com.jeff.lim.wimk.database
 
 data class WimkModel(
     // Key: User 의 uid
-    // Value : role
+    // Value : User 정보
     val users: MutableMap<String, String> = mutableMapOf(),
     // Key : Command uid
     // Value - first : cmd

@@ -4,5 +4,6 @@ enum class DBPath(val path: String) {
     WIMK("wimk"),
     Users("users"),
     WimkRooms("wimkRooms"),
+    Role("role"),
     WimkRoomKey("")
 }

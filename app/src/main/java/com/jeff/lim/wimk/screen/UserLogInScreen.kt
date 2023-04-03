@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.R
+import com.jeff.lim.wimk.database.RoleType
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import com.jeff.lim.wimk.viewmodel.UsersViewModel
 
@@ -34,15 +35,6 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
             var nameText by remember { mutableStateOf("") }
             var emailText by remember { mutableStateOf("") }
             var passwordText by remember { mutableStateOf("") }
-            /*val authResult by userViewModel.authResult.observeAsState(initial = false)
-
-            if (authResult) {
-                navController.navigate(ScreenType.InitScreen.name) {
-                    popUpTo(ScreenType.UserLogInScreen.name) {
-                        inclusive = true
-                    }
-                }
-            }*/
 
             OutlinedTextField(
                 value = emailText,
@@ -80,11 +72,34 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
 
             Button(
                 onClick = {
-                    userViewModel.logIn(nameText, emailText, passwordText) { result ->
+                    userViewModel.logIn(emailText, passwordText) { result ->
                         if (result) {
-                            navController.navigate(ScreenType.InitScreen.name) {
-                                popUpTo(ScreenType.UserLogInScreen.name) {
-                                    inclusive = true
+                            userViewModel.checkRole { role ->
+                                when (role) {
+                                    RoleType.Dad.role,
+                                    RoleType.Mom.role -> {
+                                        navController.navigate(ScreenType.KidsListScreen.name) {
+                                            popUpTo(ScreenType.UserLogInScreen.name) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
+                                    RoleType.Init.role -> {
+                                        navController.navigate(ScreenType.RegisterScreen.name) {
+                                            popUpTo(ScreenType.UserLogInScreen.name) {
+                                                inclusive = true
+                                            }
+                                        }
+
+                                    }
+                                    /*else -> {
+                                        // TODO : 자녀 화면....
+                                        navController.navigate(ScreenType.KidsListScreen.name) {
+                                            popUpTo(ScreenType.InitScreen.name) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }*/
                                 }
                             }
                         }
@@ -107,7 +122,38 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
 
             Button(
                 onClick = {
-                    userViewModel.signUp(nameText, emailText, passwordText)
+                    userViewModel.signUp(nameText, emailText, passwordText) { result ->
+                        if (result) {
+                            userViewModel.checkRole { role ->
+                                when (role) {
+                                    RoleType.Dad.role,
+                                    RoleType.Mom.role -> {
+                                        navController.navigate(ScreenType.KidsListScreen.name) {
+                                            popUpTo(ScreenType.UserLogInScreen.name) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
+                                    RoleType.Init.role -> {
+                                        navController.navigate(ScreenType.RegisterScreen.name) {
+                                            popUpTo(ScreenType.UserLogInScreen.name) {
+                                                inclusive = true
+                                            }
+                                        }
+
+                                    }
+                                    /*else -> {
+                                        // TODO : 자녀 화면....
+                                        navController.navigate(ScreenType.KidsListScreen.name) {
+                                            popUpTo(ScreenType.InitScreen.name) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }*/
+                                }
+                            }
+                        }
+                    }
                 },
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(3.dp, Color.Black),
