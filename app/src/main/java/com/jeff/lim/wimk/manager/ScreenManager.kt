@@ -13,7 +13,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.RoleType
-import com.jeff.lim.wimk.database.Users
+import com.jeff.lim.wimk.database.UserModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -56,11 +56,11 @@ class ScreenManager @Inject constructor(@ApplicationContext context: Context) {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (dataSnapshot in snapshot.children) {
-                        val users = dataSnapshot.getValue(Users::class.java)
-                        Timber.tag(logTag).d("checkRole : $users")
+                        val userModel = dataSnapshot.getValue(UserModel::class.java)
+                        Timber.tag(logTag).d("checkRole : $userModel")
 
-                        if (users != null) {
-                            onResult(users.role)
+                        if (userModel != null) {
+                            onResult(userModel.role)
                         } else {
                             onResult(RoleType.Init.role)
                         }

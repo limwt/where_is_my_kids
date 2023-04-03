@@ -10,5 +10,5 @@ data class WimkModel(
     val commands: MutableMap<String, Pair<String, String>> = mutableMapOf(),
     // Key : Chat uid
     // Value : Chat data
-    val chat: MutableMap<String, Chat> = mutableMapOf()
+    val chatModel: MutableMap<String, ChatModel> = mutableMapOf()
 )

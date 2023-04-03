@@ -33,7 +33,6 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            var nameText by remember { mutableStateOf("") }
             var emailText by remember { mutableStateOf("") }
             var passwordText by remember { mutableStateOf("") }
 
@@ -46,17 +45,6 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                     .fillMaxWidth()
                     .padding(start = 50.dp, end = 50.dp),
                 label = { Text(text = stringResource(id = R.string.text_email_hint)) }
-            )
-
-            OutlinedTextField(
-                value = nameText,
-                onValueChange = { nameText = it },
-                enabled = true,
-                textStyle = TextStyle(fontSize = 30.sp, color = Color.Black),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 50.dp, end = 50.dp, top = 20.dp),
-                label = { Text(text = stringResource(id = R.string.text_name)) }
             )
 
             OutlinedTextField(
@@ -75,31 +63,40 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                 onClick = {
                     userViewModel.logIn(emailText, passwordText) { result ->
                         if (result) {
-                            userViewModel.checkRole { role ->
-                                when (role) {
-                                    RoleType.Dad.role,
-                                    RoleType.Mom.role -> {
-                                        navController.navigate(ScreenType.ParentScreen.name) {
-                                            popUpTo(ScreenType.UserLogInScreen.name) {
-                                                inclusive = true
-                                            }
+                            userViewModel.checkFamilyRoom { userData ->
+                                if (userData.first == null) {
+                                    navController.navigate(ScreenType.RegisterScreen.name) {
+                                        popUpTo(ScreenType.UserLogInScreen.name) {
+                                            inclusive = true
                                         }
                                     }
-                                    RoleType.Init.role -> {
-                                        navController.navigate(ScreenType.RegisterScreen.name) {
-                                            popUpTo(ScreenType.UserLogInScreen.name) {
-                                                inclusive = true
+                                } else {
+                                    when (userData.second!!) {
+                                        RoleType.Dad.role,
+                                        RoleType.Mom.role -> {
+                                            navController.navigate(ScreenType.ParentScreen.name) {
+                                                popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    inclusive = true
+                                                }
                                             }
                                         }
+                                        RoleType.Init.role -> {
+                                            navController.navigate(ScreenType.RegisterScreen.name) {
+                                                popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    inclusive = true
+                                                }
+                                            }
 
-                                    }
-                                    else -> {
-                                        navController.navigate(ScreenType.KidScreen.name) {
-                                            popUpTo(ScreenType.UserLogInScreen.name) {
-                                                inclusive = true
+                                        }
+                                        else -> {
+                                            navController.navigate(ScreenType.KidScreen.name) {
+                                                popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    inclusive = true
+                                                }
                                             }
                                         }
                                     }
+
                                 }
                             }
                         }
@@ -122,34 +119,43 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
 
             Button(
                 onClick = {
-                    // TODO : 인증 키 입력 칸 추가
-                    userViewModel.signUp("", nameText, emailText, passwordText) { result ->
+                    userViewModel.signUp(emailText, passwordText) { result ->
                         if (result) {
-                            userViewModel.checkRole { role ->
-                                when (role) {
-                                    RoleType.Dad.role,
-                                    RoleType.Mom.role -> {
-                                        navController.navigate(ScreenType.ParentScreen.name) {
-                                            popUpTo(ScreenType.UserLogInScreen.name) {
-                                                inclusive = true
-                                            }
+                            userViewModel.checkFamilyRoom { userData ->
+                                if (userData.first == null) {
+                                    navController.navigate(ScreenType.RegisterScreen.name) {
+                                        popUpTo(ScreenType.UserLogInScreen.name) {
+                                            inclusive = true
                                         }
                                     }
-                                    RoleType.Init.role -> {
-                                        navController.navigate(ScreenType.RegisterScreen.name) {
-                                            popUpTo(ScreenType.UserLogInScreen.name) {
-                                                inclusive = true
+                                } else {
+                                    when (userData.second!!) {
+                                        RoleType.Dad.role,
+                                        RoleType.Mom.role -> {
+                                            navController.navigate(ScreenType.ParentScreen.name) {
+                                                popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    inclusive = true
+                                                }
                                             }
                                         }
+                                        RoleType.Son.role,
+                                        RoleType.Daughter.role -> {
+                                            navController.navigate(ScreenType.KidScreen.name) {
+                                                popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    inclusive = true
+                                                }
+                                            }
+                                        }
+                                        else -> {
+                                            navController.navigate(ScreenType.RegisterScreen.name) {
+                                                popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    inclusive = true
+                                                }
+                                            }
 
-                                    }
-                                    else -> {
-                                        navController.navigate(ScreenType.KidScreen.name) {
-                                            popUpTo(ScreenType.UserLogInScreen.name) {
-                                                inclusive = true
-                                            }
                                         }
                                     }
+
                                 }
                             }
                         }

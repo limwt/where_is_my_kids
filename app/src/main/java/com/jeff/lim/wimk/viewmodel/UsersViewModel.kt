@@ -1,5 +1,7 @@
 package com.jeff.lim.wimk.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
@@ -20,12 +22,15 @@ class UsersViewModel @Inject constructor(
     private val logTag = "[WIMK]${this::class.java.simpleName}"
     private val auth = Firebase.auth
     private val firebaseDatabase = FirebaseDatabase.getInstance()
+    private val _familyRoomUID = MutableLiveData<String>(null)
+    val familyRoomUID: LiveData<String>
+        get() = _familyRoomUID
 
     // 구글 Firebase 가입을 처리한다.
     // TODO : 추후 카카오톡, 네이버, 구글 계정과 연동한다.
-    fun signUp(key: String = "", name: String, email:String, password: String, onComplete: (Boolean) -> Unit) {
+    fun signUp(email:String, password: String, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
-            repository.singUp(key, name, email, password, onComplete)
+            repository.singUp(email, password, onComplete)
         }
     }
 
@@ -71,6 +76,18 @@ class UsersViewModel @Inject constructor(
     fun checkRole(onResult: (String) -> Unit) {
         viewModelScope.launch {
             repository.checkRole(onResult)
+        }
+    }
+
+    fun checkFamilyRoom(onComplete: (Pair<String?, String?>) -> Unit) {
+        viewModelScope.launch {
+            repository.checkFamilyRoom(onComplete)
+        }
+    }
+
+    fun updateUser(name: String, role: String, onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            repository.updateUser(name, role, onComplete)
         }
     }
 

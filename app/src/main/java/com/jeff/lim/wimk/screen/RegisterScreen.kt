@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +37,7 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
         ) {
             var dialogState by remember { mutableStateOf(false) }
             var relationIndex by remember { mutableStateOf(-1) }
+            var nameText by remember { mutableStateOf("") }
             val relationList = listOf(RoleType.Mom, RoleType.Dad, RoleType.Son, RoleType.Daughter, RoleType.Other)
 
             if (dialogState) {
@@ -48,7 +50,16 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
                 )
             }
 
-            Row(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = nameText,
+                onValueChange = { nameText = it },
+                enabled = true,
+                textStyle = TextStyle(fontSize = 30.sp, color = Color.Black),
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(text = stringResource(id = R.string.text_name)) }
+            )
+
+            Row(modifier = Modifier.fillMaxWidth().padding(top = 50.dp)) {
                 Text(
                     text = stringResource(id = R.string.text_register_relation),
                     fontSize = 25.sp,
@@ -76,7 +87,7 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
             ) {
                 Button(
                     onClick = {
-                        userViewModel.updateUser(relationList[relationIndex].role) { result ->
+                        userViewModel.updateUser(nameText, relationList[relationIndex].role) { result ->
                             if (result) {
                                 // 현재 기기가 부모이면 등록된 자녀 리스트 화면으로 이동.
                                 if (relationList[relationIndex] == RoleType.Dad || relationList[relationIndex] == RoleType.Mom) {

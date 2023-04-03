@@ -1,6 +1,6 @@
 package com.jeff.lim.wimk.database
 
-data class Users(
+data class UserModel(
     val uid: String = "",
     val name: String = "",
     val phoneNumber: String = "",
