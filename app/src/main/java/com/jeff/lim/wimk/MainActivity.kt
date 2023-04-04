@@ -97,6 +97,9 @@ fun ShowScreen(screenManager: ScreenManager, usersViewModel: UsersViewModel) {
         composable(ScreenType.KidScreen.name) {
             KidScreen()
         }
+        composable(ScreenType.AuthKeyScreen.name) {
+            AuthKeyScreen(usersViewModel = usersViewModel)
+        }
     }
 }
 

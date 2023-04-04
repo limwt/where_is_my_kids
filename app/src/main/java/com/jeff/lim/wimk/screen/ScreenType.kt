@@ -4,5 +4,6 @@ enum class ScreenType {
     RegisterScreen,
     UserLogInScreen,
     ParentScreen,
-    KidScreen
+    KidScreen,
+    AuthKeyScreen
 }

@@ -40,10 +40,10 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                 value = emailText,
                 onValueChange = { emailText = it },
                 enabled = true,
-                textStyle = TextStyle(fontSize = 30.sp, color = Color.Black),
+                textStyle = TextStyle(fontSize = 20.sp, color = Color.Black),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 50.dp, end = 50.dp),
+                    .padding(start = 20.dp, end = 20.dp),
                 label = { Text(text = stringResource(id = R.string.text_email_hint)) }
             )
 
@@ -51,10 +51,10 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                 value = passwordText,
                 onValueChange = { passwordText = it },
                 enabled = true,
-                textStyle = TextStyle(fontSize = 30.sp, color = Color.Black),
+                textStyle = TextStyle(fontSize = 20.sp, color = Color.Black),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 50.dp, end = 50.dp, top = 20.dp),
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp),
                 label = { Text(text = stringResource(id = R.string.text_password)) },
                 visualTransformation = PasswordVisualTransformation()
             )
@@ -107,7 +107,7 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                 colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 20.dp, start = 50.dp, end = 50.dp),
+                    .padding(top = 20.dp, start = 20.dp, end = 20.dp),
                 enabled = emailText.isNotEmpty() && passwordText.isNotEmpty()
             ) {
                 Text(
@@ -166,7 +166,7 @@ fun UserLogInScreen(navController: NavController, userViewModel: UsersViewModel)
                 colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 20.dp, start = 50.dp, end = 50.dp),
+                    .padding(top = 20.dp, start = 20.dp, end = 20.dp),
                 enabled = emailText.isNotEmpty() && passwordText.isNotEmpty()
             ) {
                 Text(

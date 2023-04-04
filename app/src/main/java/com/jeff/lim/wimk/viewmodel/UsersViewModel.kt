@@ -85,11 +85,30 @@ class UsersViewModel @Inject constructor(
         }
     }
 
-    fun updateUser(name: String, role: String, onComplete: (Boolean) -> Unit) {
+    fun updateUser(familyUid: String = "", name: String, role: String, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
-            repository.updateUser(name, role, onComplete)
+            repository.updateUser(familyUid, name, role, onComplete)
         }
     }
+
+    fun getUserInfo() {
+        viewModelScope.launch {
+            repository.getUserInfo()
+        }
+    }
+
+    fun getFamilyUID(authKey: String, onComplete: (String) -> Unit) {
+        viewModelScope.launch {
+            repository.getFamilyUID(authKey, onComplete)
+        }
+    }
+
+    fun updateAuthKey(key: String) {
+        viewModelScope.launch {
+            repository.updateAuthKey(key)
+        }
+    }
+
 
     private fun updateUserRole(role: String, onComplete: (Boolean) -> Unit) {
         auth.currentUser?.let { user ->

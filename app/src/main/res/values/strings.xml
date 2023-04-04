@@ -17,4 +17,6 @@
     <string name="button_text_signup">회원 가입</string>
     <string name="text_email">이메일</string>
     <string name="text_email_hint">abc@xyz.com</string>
+    <string name="text_register_child">자녀의 스마트 폰에서 등록을 완료하면\n아래 저장 버튼을 눌러 주세요.</string>
+    <string name="text_auth_key">인증 문자</string>
 </resources>

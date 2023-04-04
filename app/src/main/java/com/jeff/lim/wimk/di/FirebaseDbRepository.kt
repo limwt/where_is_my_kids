@@ -1,10 +1,7 @@
 package com.jeff.lim.wimk.di
 
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.FamilyModel
@@ -13,7 +10,6 @@ import com.jeff.lim.wimk.database.UserModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.random.Random
 
 class FirebaseDbRepository {
     private val logTag = "[WIMK]${this::class.java.simpleName}"
@@ -92,9 +88,9 @@ class FirebaseDbRepository {
             auth.currentUser?.let { user ->
                 firebaseDatabase.getReference(DBPath.WIMK.path).child(DBPath.Family.path)
                     .orderByChild("users/${user.uid}")
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                    .addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
-                            Timber.tag(logTag).d("checkFamilyRoom: ${snapshot.value}")
+                            Timber.tag(logTag).d("checkFamilyRoom - onDataChange : ${snapshot.value}")
 
                             if (snapshot.value == null) {
                                 onComplete(Pair(familyUID, RoleType.Init.role))
@@ -129,30 +125,22 @@ class FirebaseDbRepository {
                         override fun onCancelled(error: DatabaseError) {
                             onComplete(Pair(null, null))
                         }
-
                     })
             }
         }
     }
 
-
-    suspend fun updateUserInfo(user: UserModel, onComplete: (Boolean) -> Unit) {
-        withContext(Dispatchers.IO) {
-
-        }
-    }
-
-    suspend fun updateUser(name: String, role: String, onComplete: (Boolean) -> Unit) {
+    suspend fun updateUser(familyUid: String, name: String, role: String, onComplete: (Boolean) -> Unit) {
         withContext(Dispatchers.IO) {
             auth.currentUser?.let { user ->
-                Timber.tag(logTag).d("updateUser : $user")
+                Timber.tag(logTag).d("updateUser : $user, $familyUid")
                 val userModel = UserModel(uid = user.uid, name = name, role = role, email = user.email!!)
 
-                if (familyUID != null) {
+                if (familyUid.isNotEmpty()) {
                     familyModel?.users?.set(user.uid, userModel)
 
                     firebaseDatabase.getReference(DBPath.WIMK.path)
-                        .child("${DBPath.Family.path}/$familyUID")
+                        .child("${DBPath.Family.path}/$familyUid")
                         .child("${DBPath.Users.path}/${user.uid}")
                         .setValue(userModel)
                         .addOnCompleteListener {
@@ -169,8 +157,6 @@ class FirebaseDbRepository {
                     val userMap = mutableMapOf<String, UserModel>()
                     userMap[user.uid] = userModel
                     familyModel = FamilyModel(users = userMap)
-                    // 다른 사람 가입을 위한 인증키 생성
-                    familyModel?.auth = generateAuthKey()
 
                     firebaseDatabase.getReference(DBPath.WIMK.path)
                         .child(DBPath.Family.path)
@@ -191,14 +177,92 @@ class FirebaseDbRepository {
         }
     }
 
-    private fun generateAuthKey(): String {
-        val random = Random(charTable.size)
-        val result = StringBuilder()
+    suspend fun getUserInfo() {
+        withContext(Dispatchers.IO) {
+            auth.currentUser?.let { user ->
+                firebaseDatabase.getReference(DBPath.WIMK.path)
+                    .child("${DBPath.Family.path}/$familyUID")
+                    .child(DBPath.Users.path)
+                    .addChildEventListener(object : ChildEventListener{
+                        override fun onChildAdded(
+                            snapshot: DataSnapshot,
+                            previousChildName: String?
+                        ) {
+                            Timber.tag(logTag).d("onChildAdded: ${snapshot.value}")
+                        }
 
-        for (i in 0 until certLength) {
-            result.append(charTable[random.nextInt(charTable.size)])
+                        override fun onChildChanged(
+                            snapshot: DataSnapshot,
+                            previousChildName: String?
+                        ) {
+                            Timber.tag(logTag).d("onChildChanged: ${snapshot.value}")
+                        }
+
+                        override fun onChildRemoved(snapshot: DataSnapshot) {
+                        }
+
+                        override fun onChildMoved(
+                            snapshot: DataSnapshot,
+                            previousChildName: String?
+                        ) {
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                        }
+
+                    })
+            }
         }
+    }
 
-        return result.toString()
+    suspend fun getFamilyUID(authKey: String, onComplete: (String) -> Unit) {
+        withContext(Dispatchers.IO) {
+            auth.currentUser?.let { user ->
+                firebaseDatabase.getReference(DBPath.WIMK.path)
+                    .child(DBPath.Family.path)
+                    .orderByChild(DBPath.Auth.path).equalTo(authKey)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            for (dataSnapshot in snapshot.children) {
+                                Timber.tag(logTag).d("getFamilyUID - onDataChange : ${dataSnapshot.key}, ${dataSnapshot.value}")
+                                val familyUID = dataSnapshot.key!!
+                                onComplete(familyUID)
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            onComplete("")
+                        }
+                    })
+            }
+        }
+    }
+
+    suspend fun updateAuthKey(key: String) {
+        withContext(Dispatchers.IO) {
+            auth.currentUser?.let { user ->
+                firebaseDatabase.getReference(DBPath.WIMK.path)
+                    .child("${DBPath.Family.path}/$familyUID")
+                    .child(DBPath.Auth.path)
+                    .setValue(key)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Timber.tag(logTag).d("updateAuthKey - Success")
+                        } else {
+                            Timber.tag(logTag).e("updateAuthKey - Fail")
+                        }
+                    }
+                    .addOnFailureListener {
+                        Timber.tag(logTag).e("updateAuthKey - Fail")
+                    }
+            }
+        }
+    }
+
+    private fun getRandomString() : String {
+        val charset = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        return (1..8)
+            .map { charset.random() }
+            .joinToString("")
     }
 }

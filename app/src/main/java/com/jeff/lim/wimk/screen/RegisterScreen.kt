@@ -38,7 +38,15 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
             var dialogState by remember { mutableStateOf(false) }
             var relationIndex by remember { mutableStateOf(-1) }
             var nameText by remember { mutableStateOf("") }
+            var authKeyText by remember { mutableStateOf("") }
+            var familyUID by remember { mutableStateOf("") }
             val relationList = listOf(RoleType.Mom, RoleType.Dad, RoleType.Son, RoleType.Daughter, RoleType.Other)
+
+            if (authKeyText.isNotEmpty() && authKeyText.length == 8) {
+                userViewModel.getFamilyUID(authKeyText) {
+                    familyUID = it
+                }
+            }
 
             if (dialogState) {
                 SelectRelationDialog(
@@ -59,7 +67,22 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
                 label = { Text(text = stringResource(id = R.string.text_name)) }
             )
 
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 50.dp)) {
+            if (relationIndex == RoleType.Son.ordinal || relationIndex == RoleType.Dad.ordinal) {
+                OutlinedTextField(
+                    value = authKeyText,
+                    onValueChange = { authKeyText = it },
+                    enabled = true,
+                    textStyle = TextStyle(fontSize = 30.sp, color = Color.Black),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 50.dp),
+                    label = { Text(text = stringResource(id = R.string.text_auth_key)) },
+                )
+            }
+
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 50.dp)) {
                 Text(
                     text = stringResource(id = R.string.text_register_relation),
                     fontSize = 25.sp,
@@ -87,11 +110,12 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
             ) {
                 Button(
                     onClick = {
-                        userViewModel.updateUser(nameText, relationList[relationIndex].role) { result ->
+                        userViewModel.updateUser(familyUID, nameText, relationList[relationIndex].role) { result ->
                             if (result) {
                                 // 현재 기기가 부모이면 등록된 자녀 리스트 화면으로 이동.
                                 if (relationList[relationIndex] == RoleType.Dad || relationList[relationIndex] == RoleType.Mom) {
-                                    navController.navigate(ScreenType.ParentScreen.name) {
+                                    userViewModel.getUserInfo()
+                                    navController.navigate(ScreenType.AuthKeyScreen.name) {
                                         popUpTo(ScreenType.RegisterScreen.name) {
                                             inclusive = true
                                         }
