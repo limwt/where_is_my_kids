@@ -1,36 +1,16 @@
-package com.jeff.lim.wimk.screen
+package com.jeff.lim.wimk.screen.login
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.jeff.lim.wimk.R
-import com.jeff.lim.wimk.database.RoleType
-import com.jeff.lim.wimk.viewmodel.LogInViewModel
-import com.jeff.lim.wimk.viewmodel.UsersViewModel
-import kotlinx.coroutines.launch
 
 @Composable
-fun UserLogInScreen(navController: NavController, logInViewModel: LogInViewModel = viewModel(), usersViewModel: UsersViewModel = viewModel()) {
-    Column(
+fun LogInScreen(
+    openAndPopUp: (String, String) -> Unit,
+    modifier: Modifier = Modifier
+    //viewModel: LogInViewModel = hiltViewModel()
+) {
+    /*Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -73,8 +53,8 @@ fun UserLogInScreen(navController: NavController, logInViewModel: LogInViewModel
                                 usersViewModel.checkFamilyRoom().collect { result ->
                                     result?.let { ret ->
                                         if (ret.familyUID == null) {
-                                            navController.navigate(ScreenType.RegisterScreen.name) {
-                                                popUpTo(ScreenType.UserLogInScreen.name) {
+                                            navController.navigate(WimkRoutes.RegisterScreen.name) {
+                                                popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                     inclusive = true
                                                 }
                                             }
@@ -82,23 +62,23 @@ fun UserLogInScreen(navController: NavController, logInViewModel: LogInViewModel
                                             when (ret.users[Firebase.auth.uid]?.role) {
                                                 RoleType.Dad.role,
                                                 RoleType.Mom.role -> {
-                                                    navController.navigate(ScreenType.ParentScreen.name) {
-                                                        popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    navController.navigate(WimkRoutes.ParentScreen.name) {
+                                                        popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                             inclusive = true
                                                         }
                                                     }
                                                 }
                                                 RoleType.Son.role,
                                                 RoleType.Daughter.role -> {
-                                                    navController.navigate(ScreenType.KidScreen.name) {
-                                                        popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    navController.navigate(WimkRoutes.KidScreen.name) {
+                                                        popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                             inclusive = true
                                                         }
                                                     }
                                                 }
                                                 else -> {
-                                                    navController.navigate(ScreenType.RegisterScreen.name) {
-                                                        popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    navController.navigate(WimkRoutes.RegisterScreen.name) {
+                                                        popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                             inclusive = true
                                                         }
                                                     }
@@ -135,15 +115,15 @@ fun UserLogInScreen(navController: NavController, logInViewModel: LogInViewModel
                             if (ret) {
                                 usersViewModel.checkFamilyRoom().collect { result ->
                                     if (result == null) {
-                                        navController.navigate(ScreenType.RegisterScreen.name) {
-                                            popUpTo(ScreenType.UserLogInScreen.name) {
+                                        navController.navigate(WimkRoutes.RegisterScreen.name) {
+                                            popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                 inclusive = true
                                             }
                                         }
                                     } else {
                                         if (result.familyUID == null) {
-                                            navController.navigate(ScreenType.RegisterScreen.name) {
-                                                popUpTo(ScreenType.UserLogInScreen.name) {
+                                            navController.navigate(WimkRoutes.RegisterScreen.name) {
+                                                popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                     inclusive = true
                                                 }
                                             }
@@ -151,23 +131,23 @@ fun UserLogInScreen(navController: NavController, logInViewModel: LogInViewModel
                                             when (result.users[Firebase.auth.uid]?.role) {
                                                 RoleType.Dad.role,
                                                 RoleType.Mom.role -> {
-                                                    navController.navigate(ScreenType.ParentScreen.name) {
-                                                        popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    navController.navigate(WimkRoutes.ParentScreen.name) {
+                                                        popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                             inclusive = true
                                                         }
                                                     }
                                                 }
                                                 RoleType.Son.role,
                                                 RoleType.Daughter.role -> {
-                                                    navController.navigate(ScreenType.KidScreen.name) {
-                                                        popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    navController.navigate(WimkRoutes.KidScreen.name) {
+                                                        popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                             inclusive = true
                                                         }
                                                     }
                                                 }
                                                 else -> {
-                                                    navController.navigate(ScreenType.RegisterScreen.name) {
-                                                        popUpTo(ScreenType.UserLogInScreen.name) {
+                                                    navController.navigate(WimkRoutes.RegisterScreen.name) {
+                                                        popUpTo(WimkRoutes.UserLogInScreen.name) {
                                                             inclusive = true
                                                         }
                                                     }
@@ -195,12 +175,12 @@ fun UserLogInScreen(navController: NavController, logInViewModel: LogInViewModel
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
         }
-    }
+    }*/
 }
 
 @Preview(showBackground = true)
 @Composable
 fun UserLogInScreenPreview() {
-    val navController = rememberNavController()
-    UserLogInScreen(navController = navController)
+    /*val navController = rememberNavController()
+    LogInScreen(navController = navController)*/
 }

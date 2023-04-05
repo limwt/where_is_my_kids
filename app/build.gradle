@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.firebase.crashlytics'
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
@@ -68,6 +69,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-common-ktx:20.3.2'
     implementation 'com.google.firebase:firebase-database:20.1.0'
     implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
     // Import the BoM for the Firebase platform
     implementation platform("com.google.firebase:firebase-bom:31.2.3")
     // Add the dependency for the Firebase Authentication library

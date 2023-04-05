@@ -20,6 +20,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.R
+import com.jeff.lim.wimk.WimkRoutes
 import com.jeff.lim.wimk.database.RoleType
 import com.jeff.lim.wimk.di.FirebaseDbRepository
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
@@ -114,8 +115,8 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
                                             userViewModel.updateUser(result, nameText, relationList[relationIndex].role).collect { result ->
                                                 result?.let { ret ->
                                                     if (ret) {
-                                                        navController.navigate(ScreenType.KidScreen.name) {
-                                                            popUpTo(ScreenType.RegisterScreen.name) {
+                                                        navController.navigate(WimkRoutes.KidScreen.name) {
+                                                            popUpTo(WimkRoutes.RegisterScreen.name) {
                                                                 inclusive = true
                                                             }
                                                         }
@@ -130,8 +131,8 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
                                     userViewModel.updateUser("", nameText, relationList[relationIndex].role).collect { result ->
                                         result?.let { ret ->
                                             if (ret) {
-                                                navController.navigate(ScreenType.AuthKeyScreen.name) {
-                                                    popUpTo(ScreenType.RegisterScreen.name) {
+                                                navController.navigate(WimkRoutes.AuthKeyScreen.name) {
+                                                    popUpTo(WimkRoutes.RegisterScreen.name) {
                                                         inclusive = true
                                                     }
                                                 }
