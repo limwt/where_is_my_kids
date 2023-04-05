@@ -8,6 +8,9 @@ import com.jeff.lim.wimk.database.FamilyModel
 import com.jeff.lim.wimk.database.RoleType
 import com.jeff.lim.wimk.database.UserModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -22,39 +25,81 @@ class FirebaseDbRepository {
         'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
     )
 
-    private var familyUID: String? = null
-    private var familyModel: FamilyModel? = null
+    private val familyModel = FamilyModel()
 
-    suspend fun singUp(email: String, password: String, onComplete: (Boolean) -> Unit) {
+
+    suspend fun singUp(email: String, password: String): StateFlow<Boolean?> {
+        val result = MutableStateFlow<Boolean?>(null)
+
         withContext(Dispatchers.IO) {
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { authResult ->
-                Timber.tag(logTag).d("signUp result : ${authResult.isSuccessful}")
-
-                if (authResult.isSuccessful) {
-                    onComplete(true)
-                } else {
-                    onComplete(false)
-                }
+                Timber.tag(logTag).d("signUp result>>>> : ${authResult.isSuccessful}")
+                result.value = authResult.isSuccessful
             }.addOnFailureListener {
                 Timber.tag(logTag).d("signUp fail : ${it.message}")
-                onComplete(false)
+                result.value = false
             }
         }
+
+        return result.asStateFlow()
     }
 
-    suspend fun logIn(email: String, password: String, onComplete: (Boolean) -> Unit) {
-        withContext(Dispatchers.IO) {
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { authResult ->
-                Timber.tag(logTag).d("logIn result : ${authResult.isSuccessful}")
+    suspend fun logIn(email: String, password: String): StateFlow<Boolean?> {
+        val result = MutableStateFlow<Boolean?>(null)
 
-                if (authResult.isSuccessful) {
-                    Timber.tag(logTag).d("logIn user : ${auth.currentUser}")
-                    onComplete(true)
-                } else {
-                    onComplete(false)
+        withContext(Dispatchers.IO) {
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { authResult ->
+                    Timber.tag(logTag).d("logIn result : ${authResult.isSuccessful}")
+                    result.value = authResult.isSuccessful
                 }
+                .addOnFailureListener {
+                    Timber.tag(logTag).d("logIn fail : ${it.message}")
+                    result.value = false
+                }
+        }
+
+        return result.asStateFlow()
+    }
+
+    suspend fun checkFamilyRoom(): StateFlow<FamilyModel?> {
+        val result = MutableStateFlow<FamilyModel?>(null)
+
+        withContext(Dispatchers.IO) {
+            auth.currentUser?.let { user ->
+                firebaseDatabase.getReference(DBPath.WIMK.path).child(DBPath.Family.path)
+                    .orderByChild("users/${user.uid}")
+                    .addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.value != null) {
+                                dataSnapshotLoop@ for (dataSnapshot in snapshot.children) {
+                                    Timber.tag(logTag).d("checkFamilyRoom - onDataChange : ${dataSnapshot.key} ${dataSnapshot.value}")
+                                    Timber.tag(logTag).d("checkFamilyRoom - onRealDataChange : ${dataSnapshot.getValue(FamilyModel::class.java)}")
+                                    val family = dataSnapshot.getValue(FamilyModel::class.java)
+
+                                    if (family != null) {
+                                        for (u in family.users) {
+                                            if (u.key == user.uid) {
+                                                familyModel.familyUID = dataSnapshot.key
+                                                familyModel.users.putAll(family.users.toMutableMap())
+                                                familyModel.rooms.putAll(family.rooms.toMutableMap())
+                                                result.value = familyModel
+                                                break@dataSnapshotLoop
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Timber.tag(logTag).d("checkFamilyRoom - onCancelled: ${error.message}")
+                        }
+                    })
             }
         }
+
+        return result.asStateFlow()
     }
 
     suspend fun checkRole(onResult: (String) -> Unit) {
@@ -83,112 +128,64 @@ class FirebaseDbRepository {
         }
     }
 
-    suspend fun checkFamilyRoom(onComplete: (Pair<String?, String?>) -> Unit) {
-        withContext(Dispatchers.IO) {
-            auth.currentUser?.let { user ->
-                firebaseDatabase.getReference(DBPath.WIMK.path).child(DBPath.Family.path)
-                    .orderByChild("users/${user.uid}")
-                    .addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            Timber.tag(logTag).d("checkFamilyRoom - onDataChange : ${snapshot.value}")
+    suspend fun updateUser(familyUid: String, name: String, role: String): StateFlow<Boolean?> {
+        val result = MutableStateFlow<Boolean?>(null)
 
-                            if (snapshot.value == null) {
-                                onComplete(Pair(familyUID, RoleType.Init.role))
-                            } else {
-                                for (dataSnapshot in snapshot.children) {
-                                    familyModel = dataSnapshot.getValue(FamilyModel::class.java)
-                                    Timber.tag(logTag).d("checkFamilyRoom - familyModel: $familyModel")
-                                    var role = RoleType.Init.role
-
-                                    familyModel?.let { model ->
-                                        var matched = false
-
-                                        for (u in model.users) {
-                                            if (u.key == user.uid) {
-                                                familyUID = dataSnapshot.key
-                                                role = model.users[user.uid]?.role ?: RoleType.Init.role
-                                                matched = true
-                                                break
-                                            }
-                                        }
-
-                                        if (matched) {
-                                            onComplete(Pair(familyUID, role))
-                                        } else {
-                                            onComplete(Pair(familyUID, RoleType.Init.role))
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            onComplete(Pair(null, null))
-                        }
-                    })
-            }
-        }
-    }
-
-    suspend fun updateUser(familyUid: String, name: String, role: String, onComplete: (Boolean) -> Unit) {
         withContext(Dispatchers.IO) {
             auth.currentUser?.let { user ->
                 Timber.tag(logTag).d("updateUser : $user, $familyUid")
-                val userModel = UserModel(uid = user.uid, name = name, role = role, email = user.email!!)
-
                 if (familyUid.isNotEmpty()) {
-                    familyModel?.users?.set(user.uid, userModel)
-
+                    val userModel = UserModel(uid = user.uid, name = name, role = role, email = user.email!!)
+                    familyModel.users.set(user.uid, userModel)
                     firebaseDatabase.getReference(DBPath.WIMK.path)
                         .child("${DBPath.Family.path}/$familyUid")
                         .child("${DBPath.Users.path}/${user.uid}")
                         .setValue(userModel)
                         .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                onComplete(true)
-                            } else {
-                                onComplete(false)
-                            }
+                            result.value = it.isSuccessful
                         }
                         .addOnFailureListener {
-                            onComplete(false)
+                            result.value = false
                         }
                 } else {
-                    val userMap = mutableMapOf<String, UserModel>()
-                    userMap[user.uid] = userModel
-                    familyModel = FamilyModel(users = userMap)
+                    familyModel.users[user.uid] = UserModel(uid = user.uid, name = name, role = role, email = user.email!!)
 
                     firebaseDatabase.getReference(DBPath.WIMK.path)
                         .child(DBPath.Family.path)
                         .push()
                         .setValue(familyModel)
                         .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                onComplete(true)
-                            } else {
-                                onComplete(false)
-                            }
+                            result.value = it.isSuccessful
                         }
                         .addOnFailureListener {
-                            onComplete(false)
+                            result.value = false
                         }
                 }
             }
         }
+
+        return result.asStateFlow()
     }
 
-    suspend fun getUserInfo() {
+    suspend fun getUserInfo(): StateFlow<Boolean?> {
+        val result = MutableStateFlow<Boolean?>(null)
         withContext(Dispatchers.IO) {
-            auth.currentUser?.let { user ->
+            auth.currentUser?.let {
                 firebaseDatabase.getReference(DBPath.WIMK.path)
-                    .child("${DBPath.Family.path}/$familyUID")
+                    .child("${DBPath.Family.path}/${familyModel.familyUID}")
                     .child(DBPath.Users.path)
-                    .addChildEventListener(object : ChildEventListener{
+                    .addChildEventListener(object : ChildEventListener {
                         override fun onChildAdded(
                             snapshot: DataSnapshot,
                             previousChildName: String?
                         ) {
                             Timber.tag(logTag).d("onChildAdded: ${snapshot.value}")
+                            // 자녀 추가...
+                            snapshot.getValue(UserModel::class.java)?.let { user ->
+                                if (user.role == RoleType.Son.role || user.role == RoleType.Daughter.role) {
+                                    result.value = true
+                                }
+                            }
                         }
 
                         override fun onChildChanged(
@@ -213,36 +210,42 @@ class FirebaseDbRepository {
                     })
             }
         }
+
+        return result
     }
 
-    suspend fun getFamilyUID(authKey: String, onComplete: (String) -> Unit) {
+    suspend fun getFamilyUID(authKey: String): StateFlow<String?> {
+        val result = MutableStateFlow<String?>(null)
+
         withContext(Dispatchers.IO) {
-            auth.currentUser?.let { user ->
+            auth.currentUser?.let {
                 firebaseDatabase.getReference(DBPath.WIMK.path)
                     .child(DBPath.Family.path)
                     .orderByChild(DBPath.Auth.path).equalTo(authKey)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             for (dataSnapshot in snapshot.children) {
-                                Timber.tag(logTag).d("getFamilyUID - onDataChange : ${dataSnapshot.key}, ${dataSnapshot.value}")
+                                Timber.tag(logTag)
+                                    .d("getFamilyUID - onDataChange : ${dataSnapshot.key}, ${dataSnapshot.value}")
                                 val familyUID = dataSnapshot.key!!
-                                onComplete(familyUID)
+                                result.value = familyUID
                             }
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            onComplete("")
                         }
                     })
             }
         }
+
+        return result.asStateFlow()
     }
 
     suspend fun updateAuthKey(key: String) {
         withContext(Dispatchers.IO) {
-            auth.currentUser?.let { user ->
+            auth.currentUser?.let {
                 firebaseDatabase.getReference(DBPath.WIMK.path)
-                    .child("${DBPath.Family.path}/$familyUID")
+                    .child("${DBPath.Family.path}/${familyModel.familyUID}")
                     .child(DBPath.Auth.path)
                     .setValue(key)
                     .addOnCompleteListener {

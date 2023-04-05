@@ -1,16 +1,17 @@
 package com.jeff.lim.wimk.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.jeff.lim.wimk.database.DBPath
+import com.jeff.lim.wimk.database.FamilyModel
 import com.jeff.lim.wimk.database.WimkModel
 import com.jeff.lim.wimk.di.FirebaseDbRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,23 +23,14 @@ class UsersViewModel @Inject constructor(
     private val logTag = "[WIMK]${this::class.java.simpleName}"
     private val auth = Firebase.auth
     private val firebaseDatabase = FirebaseDatabase.getInstance()
-    private val _familyRoomUID = MutableLiveData<String>(null)
-    val familyRoomUID: LiveData<String>
-        get() = _familyRoomUID
+    private var _userUpdateResult = MutableStateFlow<Boolean?>(null)
+    val userUpdateResult: StateFlow<Boolean?>
+        get() = _userUpdateResult
 
-    // 구글 Firebase 가입을 처리한다.
-    // TODO : 추후 카카오톡, 네이버, 구글 계정과 연동한다.
-    fun signUp(email:String, password: String, onComplete: (Boolean) -> Unit) {
-        viewModelScope.launch {
-            repository.singUp(email, password, onComplete)
-        }
+    suspend fun checkFamilyRoom(): StateFlow<FamilyModel?> {
+        return repository.checkFamilyRoom()
     }
 
-    fun logIn(email: String, password: String, onComplete: (Boolean) -> Unit) {
-        viewModelScope.launch {
-            repository.logIn(email, password, onComplete)
-        }
-    }
 
     fun updateUser(role: String, onComplete: (Boolean) -> Unit) {
         auth.currentUser?.let { user ->
@@ -67,9 +59,13 @@ class UsersViewModel @Inject constructor(
         }
     }
 
-    fun getKidsList() {
-        auth.currentUser?.let { user ->
-
+    fun getUserInfo() {
+        viewModelScope.launch {
+            repository.getUserInfo().collect { result ->
+                result?.let {
+                    _userUpdateResult.value = it
+                }
+            }
         }
     }
 
@@ -79,28 +75,12 @@ class UsersViewModel @Inject constructor(
         }
     }
 
-    fun checkFamilyRoom(onComplete: (Pair<String?, String?>) -> Unit) {
-        viewModelScope.launch {
-            repository.checkFamilyRoom(onComplete)
-        }
+    suspend fun updateUser(familyUid: String = "", name: String, role: String): StateFlow<Boolean?> {
+        return repository.updateUser(familyUid, name, role)
     }
 
-    fun updateUser(familyUid: String = "", name: String, role: String, onComplete: (Boolean) -> Unit) {
-        viewModelScope.launch {
-            repository.updateUser(familyUid, name, role, onComplete)
-        }
-    }
-
-    fun getUserInfo() {
-        viewModelScope.launch {
-            repository.getUserInfo()
-        }
-    }
-
-    fun getFamilyUID(authKey: String, onComplete: (String) -> Unit) {
-        viewModelScope.launch {
-            repository.getFamilyUID(authKey, onComplete)
-        }
+    suspend fun getFamilyUID(authKey: String): StateFlow<String?> {
+        return repository.getFamilyUID(authKey)
     }
 
     fun updateAuthKey(key: String) {

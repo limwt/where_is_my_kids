@@ -24,6 +24,7 @@ import com.jeff.lim.wimk.database.RoleType
 import com.jeff.lim.wimk.di.FirebaseDbRepository
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import com.jeff.lim.wimk.viewmodel.UsersViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) {
@@ -39,14 +40,8 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
             var relationIndex by remember { mutableStateOf(-1) }
             var nameText by remember { mutableStateOf("") }
             var authKeyText by remember { mutableStateOf("") }
-            var familyUID by remember { mutableStateOf("") }
             val relationList = listOf(RoleType.Mom, RoleType.Dad, RoleType.Son, RoleType.Daughter, RoleType.Other)
-
-            if (authKeyText.isNotEmpty() && authKeyText.length == 8) {
-                userViewModel.getFamilyUID(authKeyText) {
-                    familyUID = it
-                }
-            }
+            val scope = rememberCoroutineScope()
 
             if (dialogState) {
                 SelectRelationDialog(
@@ -110,24 +105,41 @@ fun RegisterScreen(navController: NavController, userViewModel: UsersViewModel) 
             ) {
                 Button(
                     onClick = {
-                        userViewModel.updateUser(familyUID, nameText, relationList[relationIndex].role) { result ->
-                            if (result) {
-                                // 현재 기기가 부모이면 등록된 자녀 리스트 화면으로 이동.
-                                if (relationList[relationIndex] == RoleType.Dad || relationList[relationIndex] == RoleType.Mom) {
-                                    userViewModel.getUserInfo()
-                                    navController.navigate(ScreenType.AuthKeyScreen.name) {
-                                        popUpTo(ScreenType.RegisterScreen.name) {
-                                            inclusive = true
-                                        }
-                                    }
-                                } else {
-                                    // TODO : 현재 기기가 자녀이면 부모와 메시지를 주고 받을 수 있는 화면으로 이동.
-                                    navController.navigate(ScreenType.KidScreen.name) {
-                                        popUpTo(ScreenType.RegisterScreen.name) {
-                                            inclusive = true
+                        scope.launch {
+                            when (relationList[relationIndex]) {
+                                RoleType.Son,
+                                RoleType.Daughter -> {
+                                    userViewModel.getFamilyUID(authKeyText).collect { result ->
+                                        if (!result.isNullOrEmpty()) {
+                                            userViewModel.updateUser(result, nameText, relationList[relationIndex].role).collect { result ->
+                                                result?.let { ret ->
+                                                    if (ret) {
+                                                        navController.navigate(ScreenType.KidScreen.name) {
+                                                            popUpTo(ScreenType.RegisterScreen.name) {
+                                                                inclusive = true
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
+                                RoleType.Dad,
+                                RoleType.Mom -> {
+                                    userViewModel.updateUser("", nameText, relationList[relationIndex].role).collect { result ->
+                                        result?.let { ret ->
+                                            if (ret) {
+                                                navController.navigate(ScreenType.AuthKeyScreen.name) {
+                                                    popUpTo(ScreenType.RegisterScreen.name) {
+                                                        inclusive = true
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else -> {}
                             }
                         }
                     },

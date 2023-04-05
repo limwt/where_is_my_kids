@@ -6,10 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,16 +26,20 @@ fun AuthKeyScreen(usersViewModel: UsersViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        val authKey by remember {
-            mutableStateOf(getRandomString())
-        }
+        val authKey = getRandomString()
+        val updateUserState by usersViewModel.userUpdateResult.collectAsState()
+        var enabledButton by remember { mutableStateOf(false) }
 
-        if (authKey.isNotEmpty()) {
-            usersViewModel.updateAuthKey(authKey)
+        updateUserState?.let { state ->
+            if (state) {
+                enabledButton = true
+            }
         }
+        usersViewModel.getUserInfo()
+        usersViewModel.updateAuthKey(authKey)
 
         Text(
-            text = getRandomString(),
+            text = authKey,
             fontSize = 30.sp,
             textAlign = TextAlign.Center,
         )
@@ -62,7 +63,7 @@ fun AuthKeyScreen(usersViewModel: UsersViewModel) {
             modifier = Modifier
                 .width(150.dp)
                 .padding(top = 100.dp, end = 5.dp),
-            enabled = false
+            enabled = enabledButton
         ) {
             Text(
                 text = stringResource(id = R.string.button_save_text),
