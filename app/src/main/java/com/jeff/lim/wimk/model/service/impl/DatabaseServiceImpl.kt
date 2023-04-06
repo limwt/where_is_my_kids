@@ -5,7 +5,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.jeff.lim.wimk.database.FamilyModel
-import com.jeff.lim.wimk.database.RoleType
+import com.jeff.lim.wimk.database.RelationType
 import com.jeff.lim.wimk.model.Family
 import com.jeff.lim.wimk.model.service.AccountService
 import com.jeff.lim.wimk.model.service.DatabaseService
@@ -23,7 +23,7 @@ class DatabaseServiceImpl @Inject constructor(
     override val currentFamily: Flow<Family>
         get() = callbackFlow {
             var uid = ""
-            var role = RoleType.Init.role
+            var relation = RelationType.Init.relation
             database.getReference(DatabaseService.Path.WIMK.path)
                 .child(DatabaseService.Path.Family.path)
                 .orderByChild("users/${auth.currentUserId}")
@@ -38,7 +38,7 @@ class DatabaseServiceImpl @Inject constructor(
                                     for (u in family.users) {
                                         if (u.key == auth.currentUserId) {
                                             uid = dataSnapshot.key ?: ""
-                                            role = u.value.role
+                                            relation = u.value.role
                                             break@dataSnapshotLoop
                                         }
                                     }
@@ -51,6 +51,6 @@ class DatabaseServiceImpl @Inject constructor(
                     }
                 })
 
-            this.trySend(Family(uid, role))
+            this.trySend(Family(uid, relation))
         }
 }

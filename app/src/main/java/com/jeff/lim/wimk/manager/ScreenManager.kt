@@ -12,7 +12,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.jeff.lim.wimk.database.DBPath
-import com.jeff.lim.wimk.database.RoleType
+import com.jeff.lim.wimk.database.RelationType
 import com.jeff.lim.wimk.database.UserModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
@@ -62,13 +62,13 @@ class ScreenManager @Inject constructor(@ApplicationContext context: Context) {
                         if (userModel != null) {
                             onResult(userModel.role)
                         } else {
-                            onResult(RoleType.Init.role)
+                            onResult(RelationType.Init.relation)
                         }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    onResult(RoleType.Init.role)
+                    onResult(RelationType.Init.relation)
                 }
             })
     }

@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.common.snack_bar.SnackBarManager
 import com.jeff.lim.wimk.screen.init.InitScreen
 import com.jeff.lim.wimk.screen.login.LogInScreen
+import com.jeff.lim.wimk.screen.register.RegisterScreen
 import com.jeff.lim.wimk.screen.sign_up.SignUpScreen
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
 import kotlinx.coroutines.CoroutineScope
@@ -83,6 +84,10 @@ fun NavGraphBuilder.wimkGraph(appState: WimkAppState) {
 
     composable(WimkRoutes.LogInScreen.name) {
         LogInScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+    }
+
+    composable(WimkRoutes.RegisterScreen.name) {
+        RegisterScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
     }
 /*
     composable(SETTINGS_SCREEN) {

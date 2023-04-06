@@ -71,8 +71,7 @@ class SignUpViewModel @Inject constructor(
 
         launchCatching {
             accountService.signUp(email, password)
-            // TODO : 등록 화면
-            openAndPopUp(WimkRoutes.LogInScreen.name, WimkRoutes.SignUpScreen.name)
+            openAndPopUp(WimkRoutes.RegisterScreen.name, WimkRoutes.SignUpScreen.name)
         }
     }
 }

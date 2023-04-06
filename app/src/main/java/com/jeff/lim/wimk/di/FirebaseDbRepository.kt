@@ -5,7 +5,7 @@ import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.FamilyModel
-import com.jeff.lim.wimk.database.RoleType
+import com.jeff.lim.wimk.database.RelationType
 import com.jeff.lim.wimk.database.UserModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -115,13 +115,13 @@ class FirebaseDbRepository {
                                 if (userModel != null) {
                                     onResult(userModel.role)
                                 } else {
-                                    onResult(RoleType.Init.role)
+                                    onResult(RelationType.Init.relation)
                                 }
                             }
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            onResult(RoleType.Init.role)
+                            onResult(RelationType.Init.relation)
                         }
                     })
             }
@@ -182,7 +182,7 @@ class FirebaseDbRepository {
                             Timber.tag(logTag).d("onChildAdded: ${snapshot.value}")
                             // 자녀 추가...
                             snapshot.getValue(UserModel::class.java)?.let { user ->
-                                if (user.role == RoleType.Son.role || user.role == RoleType.Daughter.role) {
+                                if (user.role == RelationType.Son.relation || user.role == RelationType.Daughter.relation) {
                                     result.value = true
                                 }
                             }

@@ -33,7 +33,7 @@ class LogInViewModel @Inject constructor(
         uiState.value = uiState.value.copy(password = newValue)
     }
 
-    fun onLoginClick(openAndPopUp: (String, String) -> Unit) {
+    fun onLogInClick(openAndPopUp: (String, String) -> Unit) {
         launchCatching {
             if (accountService.logIn(email, password)) {
                 databaseService.currentFamily.collect { family ->
@@ -41,7 +41,7 @@ class LogInViewModel @Inject constructor(
                     if (family.uid.isEmpty()) {
 
                     } else {
-                        when (family.role) {
+                        when (family.relation) {
 
                         }
                     }

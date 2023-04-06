@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.jeff.lim.wimk.common.ext.dropdownSelector
 
 @Composable
 fun RegularCardEditor(
@@ -24,6 +25,19 @@ fun RegularCardEditor(
     onEditClick: () -> Unit
 ) {
     CardEditor(title, icon, content, onEditClick, MaterialTheme.colors.onSurface, modifier)
+}
+
+@Composable
+fun CardSelector(
+    @StringRes label: Int,
+    options: List<String>,
+    selection: String,
+    modifier: Modifier,
+    onNewValue: (String) -> Unit
+) {
+    Card(backgroundColor = MaterialTheme.colors.onPrimary, modifier = modifier) {
+        DropdownSelector(label, options, selection, Modifier.dropdownSelector(), onNewValue)
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -43,7 +57,9 @@ private fun CardEditor(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) { Text(stringResource(title), color = highlightColor) }
 

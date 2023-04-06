@@ -39,7 +39,7 @@ fun LogInScreen(
         onPasswordChange = viewModel::onPasswordChange,
         onLogInClick = {
             keyboardController?.hide()
-            viewModel.onLoginClick(openAndPopUp)
+            viewModel.onLogInClick(openAndPopUp)
         }
     )
 
