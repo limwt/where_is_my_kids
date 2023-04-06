@@ -27,9 +27,9 @@ class AuthKeyViewModel @Inject constructor(
         }
     }
 
-    fun onCompleteClick(openAndPopUp: (String, String) -> Unit) {
+    fun onCompleteClick(familyUid: String, openAndPopUp: (String, String) -> Unit) {
         launchCatching {
-            databaseService.updateAuthKey(authKey)
+            databaseService.updateAuthKey(familyUid, authKey)
         }
     }
 }

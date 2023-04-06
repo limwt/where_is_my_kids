@@ -16,6 +16,6 @@ interface DatabaseService {
 
     suspend fun register(name: String, phoneNumber: String, relation: String)
     suspend fun getCurrentFamily(): StateFlow<Family?>
-    suspend fun updateAuthKey(key: String)
+    suspend fun updateAuthKey(uid: String, key: String)
     suspend fun onKidRegister(): StateFlow<Boolean?>
 }

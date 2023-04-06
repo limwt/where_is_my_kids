@@ -50,10 +50,15 @@ class DatabaseServiceImpl @Inject constructor(
                             Timber.tag(logTag).d("checkFamilyRoom - onDataChange : ${dataSnapshot.key} ${dataSnapshot.value}")
                             Timber.tag(logTag).d("checkFamilyRoom - onRealDataChange : ${dataSnapshot.getValue(FamilyModel::class.java)}")
                             dataSnapshot.getValue(Family::class.java)?.let { family ->
-                                for (user in family.users) {
+                                for (user in family.users.entries) {
                                     if (user.key == auth.currentUserId) {
                                         familyUid = dataSnapshot.key
-                                        result.value = result.value?.copy(familyUid = familyUid)
+                                        val map = mutableMapOf<String, User>()
+                                        map[user.key] = user.value
+                                        result.value = result.value?.copy(
+                                            familyUid = familyUid,
+                                            users = map
+                                        )
                                     }
                                 }
                             }
@@ -69,15 +74,12 @@ class DatabaseServiceImpl @Inject constructor(
         return result.asStateFlow()
     }
 
-    override suspend fun updateAuthKey(key: String) {
-        Timber.tag(logTag).d("updateAuthKey $key, $familyUid")
-
-        familyUid?.let { uid ->
-            database.getReference(DBPath.WIMK.path)
-                .child("${DBPath.Family.path}/$uid")
-                .child(DBPath.Auth.path)
-                .setValue(key).await()
-        }
+    override suspend fun updateAuthKey(uid: String, key: String) {
+        Timber.tag(logTag).d("updateAuthKey $key, $uid")
+        database.getReference(DBPath.WIMK.path)
+            .child("${DBPath.Family.path}/$uid")
+            .child(DBPath.Auth.path)
+            .setValue(key).await()
     }
 
     override suspend fun onKidRegister(): StateFlow<Boolean?> {

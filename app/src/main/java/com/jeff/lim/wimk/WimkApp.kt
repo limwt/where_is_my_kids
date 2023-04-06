@@ -88,7 +88,7 @@ fun NavGraphBuilder.wimkGraph(appState: WimkAppState) {
     }
 
     composable(WimkRoutes.RegisterScreen.name) {
-        RegisterScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+        RegisterScreen(openAndPopUpWithArgument = { arg, route, popUp -> appState.navigateAndPopUpWithArguments(arg, route, popUp) })
     }
 
     composable(WimkRoutes.AuthKeyScreen.name) {

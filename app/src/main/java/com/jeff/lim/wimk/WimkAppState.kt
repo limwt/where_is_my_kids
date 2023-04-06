@@ -48,4 +48,16 @@ class WimkAppState(
             popUpTo(0) { inclusive = true }
         }
     }
+
+    fun navigateAndPopUpWithArguments(
+        argument: String,
+        route: String,
+        popUp: String
+    ) {
+        // If argument is supplied, navigate using that argument
+        navController.navigate(route.plus(argument)) {
+            launchSingleTop = true
+            popUpTo(popUp) { inclusive = true }
+        }
+    }
 }

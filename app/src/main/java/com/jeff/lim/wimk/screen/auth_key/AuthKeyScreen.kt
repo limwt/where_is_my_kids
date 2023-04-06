@@ -19,6 +19,7 @@ import com.jeff.lim.wimk.R.string as AppText
 
 @Composable
 fun AuthKeyScreen(
+    familyUid: String,
     openAndPopUp: (String, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AuthKeyViewModel = hiltViewModel()
@@ -28,7 +29,7 @@ fun AuthKeyScreen(
     AuthKeyScreenView(
         modifier = modifier,
         uiState = uiState,
-        onRegisterClick = { viewModel.onCompleteClick(openAndPopUp) }
+        onRegisterClick = { viewModel.onCompleteClick(familyUid, openAndPopUp) }
     )
 }
 
