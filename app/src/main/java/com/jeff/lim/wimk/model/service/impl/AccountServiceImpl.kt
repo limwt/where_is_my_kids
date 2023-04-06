@@ -1,5 +1,7 @@
 package com.jeff.lim.wimk.model.service.impl
 
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.jeff.lim.wimk.model.User
 import com.jeff.lim.wimk.model.service.AccountService
@@ -26,8 +28,8 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
             awaitClose { auth.removeAuthStateListener(listener) }
         }
 
-    override suspend fun logIn(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password).await()
+    override suspend fun logIn(email: String, password: String): Task<AuthResult> {
+        return auth.signInWithEmailAndPassword(email, password)
     }
 
     override suspend fun signUp(email: String, password: String) {

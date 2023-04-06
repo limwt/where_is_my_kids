@@ -71,6 +71,7 @@ class SignUpViewModel @Inject constructor(
 
         launchCatching {
             accountService.signUp(email, password)
+            // TODO : 등록 화면 혹은 부모/자녀 화면으로 변경..
             openAndPopUp(WimkRoutes.LogInScreen.name, WimkRoutes.SignUpScreen.name)
         }
     }

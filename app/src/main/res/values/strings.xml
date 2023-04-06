@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">WhereIsMyKids</string>
-    <string name="init"> </string>
+    <string name="init">우리 아이 지키미</string>
     <string name="login">로그인</string>
     <string name="create_account">계정 생성</string>
     <string name="generic_error">예상치 못한 오류가 발생했습니다. 다시 시도해 주세요.</string>

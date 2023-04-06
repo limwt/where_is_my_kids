@@ -1,7 +1,7 @@
 package com.jeff.lim.wimk.screen.init
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,7 +13,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jeff.lim.wimk.common.composable.BasicToolbar
 import com.jeff.lim.wimk.common.composable.RegularCardEditor
 import com.jeff.lim.wimk.common.ext.card
-import com.jeff.lim.wimk.common.ext.spacer
 import com.jeff.lim.wimk.R.string as AppText
 
 
@@ -39,16 +38,15 @@ fun InitScreenView(
     onLoginClick: (() -> Unit),
     onSignUpClick: (() -> Unit)
 ) {
+    BasicToolbar(title = AppText.init)
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        BasicToolbar(title = AppText.init)
-
-        Spacer(modifier = Modifier.spacer())
-
         if (uiState.isAnonymousAccount) {
             RegularCardEditor(
                 title = AppText.login,

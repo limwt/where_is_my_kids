@@ -1,49 +1,42 @@
 package com.jeff.lim.wimk.screen.login
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.jeff.lim.wimk.common.composable.BasicButton
+import com.jeff.lim.wimk.common.composable.BasicToolbar
+import com.jeff.lim.wimk.common.composable.EmailField
+import com.jeff.lim.wimk.common.composable.PasswordField
+import com.jeff.lim.wimk.common.ext.basicButton
+import com.jeff.lim.wimk.common.ext.fieldModifier
+import com.jeff.lim.wimk.R.string as AppText
 
 @Composable
 fun LogInScreen(
     openAndPopUp: (String, String) -> Unit,
-    modifier: Modifier = Modifier
-    //viewModel: LogInViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewModel: LogInViewModel = hiltViewModel()
 ) {
-    /*Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        val scope = rememberCoroutineScope()
-
-        var emailText by remember { mutableStateOf("") }
-        var passwordText by remember { mutableStateOf("") }
-
-        OutlinedTextField(
-            value = emailText,
-            onValueChange = { emailText = it },
-            enabled = true,
-            textStyle = TextStyle(fontSize = 20.sp, color = Color.Black),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp),
-            label = { Text(text = stringResource(id = R.string.text_email_hint)) }
-        )
-
-        OutlinedTextField(
-            value = passwordText,
-            onValueChange = { passwordText = it },
-            enabled = true,
-            textStyle = TextStyle(fontSize = 20.sp, color = Color.Black),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-            label = { Text(text = stringResource(id = R.string.text_password)) },
-            visualTransformation = PasswordVisualTransformation()
-        )
+    val uiState by viewModel.uiState
+    val fieldModifier = modifier.fieldModifier()
+    LogInScreenView(
+        modifier = fieldModifier,
+        uiState = uiState,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onLogInClick = { viewModel.onLoginClick(openAndPopUp) }
+    )
 
 
+    /*
         Button(
             onClick = {
                 scope.launch {
@@ -178,9 +171,42 @@ fun LogInScreen(
     }*/
 }
 
+@Composable
+fun LogInScreenView(
+    modifier: Modifier,
+    uiState: LogInUiState,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLogInClick: () -> Unit
+) {
+    BasicToolbar(title = AppText.login)
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        EmailField(uiState.email, onEmailChange, modifier)
+        PasswordField(uiState.password, onPasswordChange, modifier)
+
+        BasicButton(
+            text = AppText.login,
+            modifier = Modifier.basicButton(),
+            action = onLogInClick
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun UserLogInScreenPreview() {
-    /*val navController = rememberNavController()
-    LogInScreen(navController = navController)*/
+    LogInScreenView(
+        modifier = Modifier,
+        uiState = LogInUiState(),
+        onEmailChange = {},
+        onPasswordChange = {},
+        onLogInClick = {}
+    )
 }
