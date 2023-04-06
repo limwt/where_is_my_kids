@@ -8,7 +8,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jeff.lim.wimk.common.composable.BasicButton
@@ -19,6 +21,7 @@ import com.jeff.lim.wimk.common.ext.basicButton
 import com.jeff.lim.wimk.common.ext.fieldModifier
 import com.jeff.lim.wimk.R.string as AppText
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LogInScreen(
     openAndPopUp: (String, String) -> Unit,
@@ -27,12 +30,17 @@ fun LogInScreen(
 ) {
     val uiState by viewModel.uiState
     val fieldModifier = modifier.fieldModifier()
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     LogInScreenView(
         modifier = fieldModifier,
         uiState = uiState,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
-        onLogInClick = { viewModel.onLoginClick(openAndPopUp) }
+        onLogInClick = {
+            keyboardController?.hide()
+            viewModel.onLoginClick(openAndPopUp)
+        }
     )
 
 

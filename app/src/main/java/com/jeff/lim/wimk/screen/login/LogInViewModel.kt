@@ -1,7 +1,9 @@
 package com.jeff.lim.wimk.screen.login
 
 import androidx.compose.runtime.mutableStateOf
+import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.WimkRoutes
+import com.jeff.lim.wimk.common.snack_bar.SnackBarManager
 import com.jeff.lim.wimk.model.service.AccountService
 import com.jeff.lim.wimk.model.service.LogService
 import com.jeff.lim.wimk.screen.WimkViewModel
@@ -31,11 +33,14 @@ class LogInViewModel @Inject constructor(
         launchCatching {
             accountService.logIn(email, password)
                 .addOnCompleteListener {
-                    // TODO : 등록 화면 혹은 부모/자녀 화면으로 변경..
-                    openAndPopUp(WimkRoutes.SignUpScreen.name, WimkRoutes.LogInScreen.name)
+                    if (it.isSuccessful) {
+                        openAndPopUp(WimkRoutes.SignUpScreen.name, WimkRoutes.LogInScreen.name)
+                    } else {
+                        SnackBarManager.showMessage(R.string.login_error)
+                    }
                 }
                 .addOnFailureListener {
-
+                    SnackBarManager.showMessage(R.string.login_error)
                 }
         }
     }

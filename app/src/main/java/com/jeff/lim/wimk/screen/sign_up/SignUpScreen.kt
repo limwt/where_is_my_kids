@@ -8,7 +8,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jeff.lim.wimk.common.composable.*
@@ -16,6 +18,7 @@ import com.jeff.lim.wimk.common.ext.basicButton
 import com.jeff.lim.wimk.common.ext.fieldModifier
 import com.jeff.lim.wimk.R.string as AppText
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignUpScreen(
     openAndPopUp: (String, String) -> Unit,
@@ -24,6 +27,7 @@ fun SignUpScreen(
 ) {
     val uiState by viewModel.uiState
     val fieldModifier = modifier.fieldModifier()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     SignUpScreenView(
         modifier = fieldModifier,
@@ -31,7 +35,10 @@ fun SignUpScreen(
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         onRepeatPasswordChange = viewModel::onRepeatPasswordChange,
-        onSignUpClick = { viewModel.onSignUpClick(openAndPopUp) }
+        onSignUpClick = {
+            keyboardController?.hide()
+            viewModel.onSignUpClick(openAndPopUp)
+        }
     )
 }
 
