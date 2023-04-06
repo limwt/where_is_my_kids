@@ -43,7 +43,7 @@ fun SignUpScreen(
 }
 
 @Composable
-fun SignUpScreenView(
+private fun SignUpScreenView(
     modifier: Modifier,
     uiState: SignUpUiState,
     onEmailChange: (String) -> Unit,

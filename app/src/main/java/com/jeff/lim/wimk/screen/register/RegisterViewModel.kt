@@ -48,8 +48,7 @@ class RegisterViewModel @Inject constructor(
                 RelationType.Dad.relation,
                 RelationType.Mom.relation -> {
                     databaseService.register(name, phoneNumber, relation)
-                    // TODO : 인증 화면...
-                    openAndPopUp(WimkRoutes.InitScreen.name, WimkRoutes.RegisterScreen.name)
+                    openAndPopUp(WimkRoutes.AuthKeyScreen.name, WimkRoutes.RegisterScreen.name)
                 }
                 RelationType.Son.relation,
                 RelationType.Dad.relation -> {

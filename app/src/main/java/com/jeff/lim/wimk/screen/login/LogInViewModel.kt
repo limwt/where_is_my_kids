@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.WimkRoutes
 import com.jeff.lim.wimk.common.snack_bar.SnackBarManager
+import com.jeff.lim.wimk.database.RelationType
 import com.jeff.lim.wimk.model.service.AccountService
 import com.jeff.lim.wimk.model.service.DatabaseService
 import com.jeff.lim.wimk.model.service.LogService
@@ -37,16 +38,35 @@ class LogInViewModel @Inject constructor(
     fun onLogInClick(openAndPopUp: (String, String) -> Unit) {
         launchCatching {
             if (accountService.logIn(email, password)) {
-                databaseService.currentFamily.collect { family ->
+                databaseService.getCurrentFamily().collect { family ->
                     Timber.tag(logTag).d("onLoginClick - currentFamily $family")
-                    if (family.uid.isNullOrEmpty()) {
+
+                    if (family == null) {
+                        openAndPopUp(WimkRoutes.RegisterScreen.name, WimkRoutes.LogInScreen.name)
+                    } else {
+                        when (family.users[accountService.currentUserId]?.relation) {
+                            RelationType.Dad.relation,
+                            RelationType.Mom.relation -> {
+
+                            }
+                            RelationType.Son.relation,
+                            RelationType.Daughter.relation -> {
+
+                            }
+                        }
+                    }
+                }
+
+                /*databaseService.currentFamily.collect { family ->
+                    Timber.tag(logTag).d("onLoginClick - currentFamily $family")
+                    if (family.uid != null && family.familyUid.isNullOrEmpty()) {
                         openAndPopUp(WimkRoutes.RegisterScreen.name, WimkRoutes.LogInScreen.name)
                     } else {
                         when (family.relation) {
 
                         }
                     }
-                }
+                }*/
             } else {
                 SnackBarManager.showMessage(R.string.login_error)
             }

@@ -32,7 +32,7 @@ fun InitScreen(
 }
 
 @Composable
-fun InitScreenView(
+private fun InitScreenView(
     modifier: Modifier,
     uiState: InitUiState,
     onLoginClick: (() -> Unit),

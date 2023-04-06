@@ -17,6 +17,8 @@
     <string name="phone_number">전화번호</string>
     <string name="auth_key">인증문자</string>
     <string name="register_error">사용자 등록에 실패했습니다. 입력하신 정보를 확인해 주세요.</string>
+    <string name="add_kids">자녀 등록</string>
+    <string name="guide_add_kids">자녀의 스마트 폰에서 등록을 완료하면\n아래 저장 버튼을 눌러 주세요.</string>
 
 
     <string name="text_no_register">등록된 자녀가 없습니다.</string>
@@ -36,6 +38,5 @@
     <string name="button_text_signup">회원 가입</string>
     <string name="text_email">이메일</string>
     <string name="text_email_hint">abc@xyz.com</string>
-    <string name="text_register_child">자녀의 스마트 폰에서 등록을 완료하면\n아래 저장 버튼을 눌러 주세요.</string>
     <string name="text_auth_key">인증 문자</string>
 </resources>

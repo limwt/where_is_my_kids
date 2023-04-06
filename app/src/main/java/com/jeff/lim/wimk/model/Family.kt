@@ -4,8 +4,6 @@ import com.jeff.lim.wimk.database.AuthKeyModel
 import com.jeff.lim.wimk.database.RoomModel
 
 data class Family(
-    val uid: String? = null,
-    val relation: String? = null,
     val familyUid: String? = null,
     val authKeyModel: AuthKeyModel = AuthKeyModel(),
     val users: MutableMap<String, User> = mutableMapOf(),

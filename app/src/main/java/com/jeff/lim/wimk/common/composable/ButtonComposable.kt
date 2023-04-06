@@ -86,3 +86,19 @@ fun DialogTextButton(text: String, modifier: Modifier, action: () -> Unit) {
         Text(text = text)
     }
 }
+
+@Composable
+fun EnableButton(@StringRes text: Int, modifier: Modifier, action: () -> Unit, enabled: Boolean) {
+    Button(
+        onClick = action,
+        modifier = modifier,
+        colors =
+        ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.onPrimary
+        ),
+        enabled = enabled
+    ) {
+        Text(text = stringResource(text), fontSize = 16.sp)
+    }
+}

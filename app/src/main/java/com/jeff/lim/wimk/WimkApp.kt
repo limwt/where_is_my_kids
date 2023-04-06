@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jeff.lim.wimk.common.snack_bar.SnackBarManager
+import com.jeff.lim.wimk.screen.auth_key.AuthKeyScreen
 import com.jeff.lim.wimk.screen.init.InitScreen
 import com.jeff.lim.wimk.screen.login.LogInScreen
 import com.jeff.lim.wimk.screen.register.RegisterScreen
@@ -89,31 +90,8 @@ fun NavGraphBuilder.wimkGraph(appState: WimkAppState) {
     composable(WimkRoutes.RegisterScreen.name) {
         RegisterScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
     }
-/*
-    composable(SETTINGS_SCREEN) {
-        SettingsScreen(
-            restartApp = { route -> appState.clearAndNavigate(route) },
-            openScreen = { route -> appState.navigate(route) }
-        )
+
+    composable(WimkRoutes.AuthKeyScreen.name) {
+        AuthKeyScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
     }
-
-    composable(LOGIN_SCREEN) {
-        LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-    }
-
-    composable(SIGN_UP_SCREEN) {
-        SignUpScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-    }
-
-    composable(TASKS_SCREEN) { TasksScreen(openScreen = { route -> appState.navigate(route) }) }
-
-    composable(
-        route = "$EDIT_TASK_SCREEN$TASK_ID_ARG",
-        arguments = listOf(navArgument(TASK_ID) { defaultValue = TASK_DEFAULT_ID })
-    ) {
-        EditTaskScreen(
-            popUpScreen = { appState.popUp() },
-            taskId = it.arguments?.getString(TASK_ID) ?: TASK_DEFAULT_ID
-        )
-    }*/
 }

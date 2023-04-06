@@ -39,7 +39,7 @@ fun RegisterScreen(
 }
 
 @Composable
-fun RegisterScreenView(
+private fun RegisterScreenView(
     modifier: Modifier,
     uiState: RegisterUiState,
     onNameChange: (String) -> Unit,
