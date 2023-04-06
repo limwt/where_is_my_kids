@@ -17,8 +17,10 @@ limitations under the License.
 package com.jeff.lim.wimk.model.service.module
 
 import com.jeff.lim.wimk.model.service.AccountService
+import com.jeff.lim.wimk.model.service.DatabaseService
 import com.jeff.lim.wimk.model.service.LogService
 import com.jeff.lim.wimk.model.service.impl.AccountServiceImpl
+import com.jeff.lim.wimk.model.service.impl.DatabaseServiceImpl
 import com.jeff.lim.wimk.model.service.impl.LogServiceImpl
 import dagger.Binds
 import dagger.Module
@@ -31,4 +33,6 @@ abstract class ServiceModule {
   @Binds abstract fun provideAccountService(impl: AccountServiceImpl): AccountService
 
   @Binds abstract fun provideLogService(impl: LogServiceImpl): LogService
+
+  @Binds abstract fun provideDatabaseService(imple: DatabaseServiceImpl): DatabaseService
 }
