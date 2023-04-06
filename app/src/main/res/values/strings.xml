@@ -16,6 +16,7 @@
     <string name="relation">관계</string>
     <string name="phone_number">전화번호</string>
     <string name="auth_key">인증문자</string>
+    <string name="register_error">사용자 등록에 실패했습니다. 입력하신 정보를 확인해 주세요.</string>
 
 
     <string name="text_no_register">등록된 자녀가 없습니다.</string>

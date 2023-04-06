@@ -15,4 +15,6 @@ interface DatabaseService {
         Auth("auth"),
         WimkRoomKey("")
     }
+
+    suspend fun register(name: String, phoneNumber: String, relation: String)
 }

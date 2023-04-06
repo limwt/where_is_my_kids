@@ -4,13 +4,16 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.FamilyModel
 import com.jeff.lim.wimk.database.RelationType
 import com.jeff.lim.wimk.model.Family
+import com.jeff.lim.wimk.model.User
 import com.jeff.lim.wimk.model.service.AccountService
 import com.jeff.lim.wimk.model.service.DatabaseService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -53,4 +56,20 @@ class DatabaseServiceImpl @Inject constructor(
 
             this.trySend(Family(uid, relation))
         }
+
+    override suspend fun register(name: String, phoneNumber: String, relation: String) {
+        val data = mutableMapOf<String, User>()
+        data[auth.currentUserId] = User(
+            id = auth.currentUserId,
+            name = name,
+            relation = relation,
+            phoneNumber = phoneNumber,
+            email = auth.currentUserEmail
+        )
+
+        database.getReference(DBPath.WIMK.path)
+            .child(DBPath.Family.path)
+            .push()
+            .setValue(Family(users = data)).await()
+    }
 }

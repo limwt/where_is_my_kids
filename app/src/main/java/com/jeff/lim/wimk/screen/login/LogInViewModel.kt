@@ -2,6 +2,7 @@ package com.jeff.lim.wimk.screen.login
 
 import androidx.compose.runtime.mutableStateOf
 import com.jeff.lim.wimk.R
+import com.jeff.lim.wimk.WimkRoutes
 import com.jeff.lim.wimk.common.snack_bar.SnackBarManager
 import com.jeff.lim.wimk.model.service.AccountService
 import com.jeff.lim.wimk.model.service.DatabaseService
@@ -38,8 +39,8 @@ class LogInViewModel @Inject constructor(
             if (accountService.logIn(email, password)) {
                 databaseService.currentFamily.collect { family ->
                     Timber.tag(logTag).d("onLoginClick - currentFamily $family")
-                    if (family.uid.isEmpty()) {
-
+                    if (family.uid.isNullOrEmpty()) {
+                        openAndPopUp(WimkRoutes.RegisterScreen.name, WimkRoutes.LogInScreen.name)
                     } else {
                         when (family.relation) {
 
