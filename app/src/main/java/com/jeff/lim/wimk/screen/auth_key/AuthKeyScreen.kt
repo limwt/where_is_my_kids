@@ -19,14 +19,14 @@ import com.jeff.lim.wimk.R.string as AppText
 
 @Composable
 fun AuthKeyScreen(
+    modifier: Modifier = Modifier,
     familyUid: String = "",
     openAndPopUp: (String, String) -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: AuthKeyViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState
     viewModel.updateAuthKey(familyUid)
-    viewModel.onEvent()
+    viewModel.onKidRegister(familyUid)
     AuthKeyScreenView(
         modifier = modifier,
         uiState = uiState,

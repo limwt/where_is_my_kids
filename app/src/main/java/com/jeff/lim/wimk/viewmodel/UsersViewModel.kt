@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
-import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.FamilyModel
 import com.jeff.lim.wimk.database.WimkModel
 import com.jeff.lim.wimk.di.FirebaseDbRepository
+import com.jeff.lim.wimk.model.DBPath
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

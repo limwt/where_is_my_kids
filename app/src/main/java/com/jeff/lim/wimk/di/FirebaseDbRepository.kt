@@ -3,10 +3,10 @@ package com.jeff.lim.wimk.di
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
-import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.FamilyModel
 import com.jeff.lim.wimk.database.RelationType
 import com.jeff.lim.wimk.database.UserModel
+import com.jeff.lim.wimk.model.DBPath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.jeff.lim.wimk.database
+package com.jeff.lim.wimk.model
 
 enum class DBPath(val path: String) {
     WIMK("wimk"),

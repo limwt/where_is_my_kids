@@ -1,8 +1,8 @@
 package com.jeff.lim.wimk.model.service.impl
 
 import com.google.firebase.database.*
-import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.RelationType
+import com.jeff.lim.wimk.model.DBPath
 import com.jeff.lim.wimk.model.Family
 import com.jeff.lim.wimk.model.User
 import com.jeff.lim.wimk.model.service.AccountService
@@ -19,22 +19,39 @@ class DatabaseServiceImpl @Inject constructor(
     private val database: FirebaseDatabase
 ) : DatabaseService {
     private val logTag = "[WIMK]DatabaseService"
-    private var familyUid: String? = null
 
-    override suspend fun register(name: String, phoneNumber: String, relation: String) {
-        val data = mutableMapOf<String, User>()
-        data[auth.currentUserId] = User(
-            id = auth.currentUserId,
-            name = name,
-            relation = relation,
-            phoneNumber = phoneNumber,
-            email = auth.currentUserEmail
-        )
+    override suspend fun register(
+        familyUid: String,
+        name: String,
+        phoneNumber: String,
+        relation: String
+    ) {
+        if (familyUid.isEmpty()) {
+            val data = mutableMapOf<String, User>()
+            data[auth.currentUserId] = User(
+                id = auth.currentUserId,
+                name = name,
+                relation = relation,
+                phoneNumber = phoneNumber,
+                email = auth.currentUserEmail
+            )
 
-        database.getReference(DBPath.WIMK.path)
-            .child(DBPath.Family.path)
-            .push()
-            .setValue(Family(users = data)).await()
+            database.getReference(DBPath.WIMK.path)
+                .child(DBPath.Family.path)
+                .push()
+                .setValue(Family(users = data)).await()
+        } else {
+            database.getReference(DBPath.WIMK.path)
+                .child("${DBPath.Family.path}/$familyUid")
+                .child("${DBPath.Users.path}/${auth.currentUserId}")
+                .setValue(User(
+                    id = auth.currentUserId,
+                    name = name,
+                    relation = relation,
+                    phoneNumber = phoneNumber,
+                    email = auth.currentUserEmail
+                )).await()
+        }
     }
 
     override suspend fun getCurrentFamily(): StateFlow<Family?> {
@@ -53,7 +70,6 @@ class DatabaseServiceImpl @Inject constructor(
                             if (family != null) {
                                 for (user in family.users) {
                                     if (user.key == auth.currentUserId) {
-                                        familyUid = dataSnapshot.key
                                         val map = mutableMapOf<String, User>()
                                         map[user.key] = user.value
                                         result.value = Family(familyUid = dataSnapshot.key, users = map)
@@ -73,6 +89,26 @@ class DatabaseServiceImpl @Inject constructor(
         return result.asStateFlow()
     }
 
+    override suspend fun getCurrentFamilyWithAuthKey(key: String): StateFlow<Family?> {
+        val result = MutableStateFlow<Family?>(null)
+        database.getReference(DBPath.WIMK.path)
+            .child(DBPath.Family.path)
+            .orderByChild(DBPath.Auth.path).equalTo(key)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (dataSnapshot in snapshot.children) {
+                        Timber.tag(logTag).d("getCurrentFamilyWithAuthKey - onDataChange : ${dataSnapshot.key}, ${dataSnapshot.value}")
+                        result.value = Family(familyUid = dataSnapshot.key)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+
+        return result.asStateFlow()
+    }
+
     override suspend fun updateAuthKey(uid: String, key: String) {
         if (uid.isNotEmpty()) {
             Timber.tag(logTag).d("updateAuthKey $key, $uid")
@@ -83,34 +119,32 @@ class DatabaseServiceImpl @Inject constructor(
         }
     }
 
-    override suspend fun onKidRegister(): StateFlow<Boolean?> {
+    override suspend fun onKidRegister(familyUid: String): StateFlow<Boolean?> {
         val result = MutableStateFlow<Boolean?>(null)
         Timber.tag(logTag).d("onKidRegister $familyUid")
 
-        familyUid?.let { uid ->
-            database.getReference(DBPath.WIMK.path)
-                .child("${DBPath.Family.path}/$uid")
-                .child(DBPath.Users.path)
-                .addChildEventListener(object : ChildEventListener {
-                    override fun onChildAdded(
-                        snapshot: DataSnapshot,
-                        previousChildName: String?
-                    ) {
-                        Timber.tag(logTag).d("onChildAdded: ${snapshot.value}")
-                        // 자녀 추가...
-                        snapshot.getValue(User::class.java)?.let { user ->
-                            if (user.relation == RelationType.Son.relation || user.relation == RelationType.Daughter.relation) {
-                                result.value = true
-                            }
+        database.getReference(DBPath.WIMK.path)
+            .child("${DBPath.Family.path}/$familyUid")
+            .child(DBPath.Users.path)
+            .addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(
+                    snapshot: DataSnapshot,
+                    previousChildName: String?
+                ) {
+                    Timber.tag(logTag).d("onChildAdded: ${snapshot.value}")
+                    // 자녀 추가...
+                    snapshot.getValue(User::class.java)?.let { user ->
+                        if (user.relation == RelationType.Son.relation || user.relation == RelationType.Daughter.relation) {
+                            result.value = true
                         }
                     }
+                }
 
-                    override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-                    override fun onChildRemoved(snapshot: DataSnapshot) {}
-                    override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-                    override fun onCancelled(error: DatabaseError) {}
-                })
-        }
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onChildRemoved(snapshot: DataSnapshot) {}
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onCancelled(error: DatabaseError) {}
+            })
 
         return result.asStateFlow()
     }

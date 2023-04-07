@@ -17,9 +17,9 @@ class AuthKeyViewModel @Inject constructor(
     private val authKey
         get() = uiState.value.authKey
 
-    fun onEvent() {
+    fun onKidRegister(familyUid: String) {
         launchCatching {
-            databaseService.onKidRegister().collect { result ->
+            databaseService.onKidRegister(familyUid).collect { result ->
                 if (result != null && result) {
                     uiState.value = uiState.value.copy(kidAdded = true)
                 }

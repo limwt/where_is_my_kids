@@ -52,9 +52,10 @@ class RegisterViewModel @Inject constructor(
             when (relation) {
                 RelationType.Dad.relation,
                 RelationType.Mom.relation -> {
-                    databaseService.register(name, phoneNumber, relation)
+                    // TODO : 등록된 가족이 있을 경우 다른 부모를 등록할때??
+                    databaseService.register("", name, phoneNumber, relation)
                     databaseService.getCurrentFamily().collect { family ->
-                        Timber.tag(logTag).d("onLoginClick - currentFamily $family")
+                        Timber.tag(logTag).d("onLoginClick - currentFamily $relation $family")
 
                         family?.let { fam ->
                             when (fam.users[accountService.currentUserId]?.relation) {
@@ -72,7 +73,19 @@ class RegisterViewModel @Inject constructor(
                 }
                 RelationType.Son.relation,
                 RelationType.Dad.relation -> {
+                    databaseService.getCurrentFamilyWithAuthKey(authKey).collect { family ->
+                        Timber.tag(logTag).d("onLoginClick - currentFamily $relation $family")
 
+                        family?.let { fam ->
+                            fam.familyUid?.let { uid ->
+                                databaseService.register(uid, name, phoneNumber, relation)
+                            }
+
+                            // TODO : 자녀 화면으로 이동...
+                            openAndPopUp(WimkRoutes.LogInScreen.name, WimkRoutes.RegisterScreen.name, "")
+                        }
+
+                    }
                 }
                 else -> {
                     SnackBarManager.showMessage(AppText.register_error)

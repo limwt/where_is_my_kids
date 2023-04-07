@@ -11,9 +11,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
-import com.jeff.lim.wimk.database.DBPath
 import com.jeff.lim.wimk.database.RelationType
 import com.jeff.lim.wimk.database.UserModel
+import com.jeff.lim.wimk.model.DBPath
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject

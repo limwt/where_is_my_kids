@@ -14,8 +14,9 @@ interface DatabaseService {
         WimkRoomKey("")
     }
 
-    suspend fun register(name: String, phoneNumber: String, relation: String)
+    suspend fun register(familyUid: String, name: String, phoneNumber: String, relation: String)
     suspend fun getCurrentFamily(): StateFlow<Family?>
+    suspend fun getCurrentFamilyWithAuthKey(key: String): StateFlow<Family?>
     suspend fun updateAuthKey(uid: String, key: String)
-    suspend fun onKidRegister(): StateFlow<Boolean?>
+    suspend fun onKidRegister(familyUid: String): StateFlow<Boolean?>
 }

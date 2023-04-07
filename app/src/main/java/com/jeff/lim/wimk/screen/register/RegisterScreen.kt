@@ -10,10 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.jeff.lim.wimk.common.composable.BasicButton
-import com.jeff.lim.wimk.common.composable.BasicField
-import com.jeff.lim.wimk.common.composable.BasicToolbar
-import com.jeff.lim.wimk.common.composable.CardSelector
+import com.jeff.lim.wimk.common.composable.*
 import com.jeff.lim.wimk.common.ext.basicButton
 import com.jeff.lim.wimk.common.ext.card
 import com.jeff.lim.wimk.database.RelationType
@@ -57,8 +54,7 @@ private fun RegisterScreenView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        BasicField(
-            text = AppText.name,
+        NameField(
             value = uiState.name,
             onNewValue = onNameChange,
             modifier = modifier
@@ -66,8 +62,7 @@ private fun RegisterScreenView(
                 .padding(start = 16.dp, end = 16.dp)
         )
 
-        BasicField(
-            text = AppText.phone_number,
+        PhoneNumberField(
             value = uiState.phoneNumber,
             onNewValue = onPhoneNumberChange,
             modifier = modifier
@@ -76,8 +71,7 @@ private fun RegisterScreenView(
         )
 
         if (uiState.relation == RelationType.Son.relation || uiState.relation == RelationType.Daughter.relation) {
-            BasicField(
-                text = AppText.auth_key,
+            AuthKeyField(
                 value = uiState.authKey,
                 onNewValue = onAuthKeyChange,
                 modifier = modifier
@@ -112,149 +106,6 @@ private fun CardSelectors(
         onRelationChange(newValue)
     }
 }
-
-
-
-
-
-
-
-
-
-
-/*WIMKTheme {
-       Column(
-           modifier = Modifier
-               .fillMaxSize()
-               .padding(start = 20.dp, end = 20.dp),
-           horizontalAlignment = Alignment.CenterHorizontally,
-           verticalArrangement = Arrangement.Center
-       ) {
-           var dialogState by remember { mutableStateOf(false) }
-           var relationIndex by remember { mutableStateOf(-1) }
-           var nameText by remember { mutableStateOf("") }
-           var authKeyText by remember { mutableStateOf("") }
-           val relationList = listOf(RelationType.Mom, RelationType.Dad, RelationType.Son, RelationType.Daughter, RelationType.Other)
-           val scope = rememberCoroutineScope()
-
-           if (dialogState) {
-               SelectRelationDialog(
-                   defaultSelected = relationIndex,
-                   onDismissRequest = {
-                       relationIndex = it
-                       dialogState = false
-                   }
-               )
-           }
-
-           OutlinedTextField(
-               value = nameText,
-               onValueChange = { nameText = it },
-               enabled = true,
-               textStyle = TextStyle(fontSize = 30.sp, color = Color.Black),
-               modifier = Modifier.fillMaxWidth(),
-               label = { Text(text = stringResource(id = R.string.text_name)) }
-           )
-
-           if (relationIndex == RelationType.Son.ordinal || relationIndex == RelationType.Dad.ordinal) {
-               OutlinedTextField(
-                   value = authKeyText,
-                   onValueChange = { authKeyText = it },
-                   enabled = true,
-                   textStyle = TextStyle(fontSize = 30.sp, color = Color.Black),
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .padding(top = 50.dp),
-                   label = { Text(text = stringResource(id = R.string.text_auth_key)) },
-               )
-           }
-
-           Row(modifier = Modifier
-               .fillMaxWidth()
-               .padding(top = 50.dp)) {
-               Text(
-                   text = stringResource(id = R.string.text_register_relation),
-                   fontSize = 25.sp,
-                   modifier = Modifier.align(Alignment.CenterVertically)
-               )
-
-               Button(
-                   onClick = { dialogState = !dialogState },
-                   colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .padding(start = 20.dp)
-               ) {
-                   Text(
-                       text = if (relationIndex == -1) stringResource(id = R.string.text_no_relation) else relationList[relationIndex].relation,
-                       fontSize = 20.sp
-                   )
-               }
-           }
-
-           Row(
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .padding(top = 20.dp)
-           ) {
-               Button(
-                   onClick = {
-                       scope.launch {
-                           when (relationList[relationIndex]) {
-                               RelationType.Son,
-                               RelationType.Daughter -> {
-                                   userViewModel.getFamilyUID(authKeyText).collect { result ->
-                                       if (!result.isNullOrEmpty()) {
-                                           userViewModel.updateUser(result, nameText, relationList[relationIndex].relation).collect { result ->
-                                               result?.let { ret ->
-                                                   if (ret) {
-                                                       navController.navigate(WimkRoutes.KidScreen.name) {
-                                                           popUpTo(WimkRoutes.RegisterScreen.name) {
-                                                               inclusive = true
-                                                           }
-                                                       }
-                                                   }
-                                               }
-                                           }
-                                       }
-                                   }
-                               }
-                               RelationType.Dad,
-                               RelationType.Mom -> {
-                                   userViewModel.updateUser("", nameText, relationList[relationIndex].relation).collect { result ->
-                                       result?.let { ret ->
-                                           if (ret) {
-                                               navController.navigate(WimkRoutes.AuthKeyScreen.name) {
-                                                   popUpTo(WimkRoutes.RegisterScreen.name) {
-                                                       inclusive = true
-                                                   }
-                                               }
-                                           }
-                                       }
-                                   }
-                               }
-                               else -> {}
-                           }
-                       }
-                   },
-                   shape = RoundedCornerShape(20.dp),
-                   border = BorderStroke(3.dp, Color.Black),
-                   colors = ButtonDefaults.buttonColors(contentColor = Color.Black, backgroundColor = Color.White),
-                   modifier = Modifier
-                       .width(150.dp)
-                       .weight(1.0f)
-                       .padding(end = 5.dp),
-                   enabled = relationIndex >= 0
-               ) {
-                   Text(
-                       text = stringResource(id = R.string.button_save_text),
-                       fontSize = 20.sp,
-                       modifier = Modifier.padding(horizontal = 30.dp, vertical = 6.dp)
-                   )
-               }
-           }
-       }
-   }*/
 
 @Preview(showBackground = true)
 @Composable

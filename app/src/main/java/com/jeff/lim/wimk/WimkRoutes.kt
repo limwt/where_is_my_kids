@@ -5,7 +5,6 @@ enum class WimkRoutes {
     RegisterScreen,
     LogInScreen,
     SignUpScreen,
+    AuthKeyScreen,
     ParentScreen,
-    KidScreen,
-    AuthKeyScreen
 }
