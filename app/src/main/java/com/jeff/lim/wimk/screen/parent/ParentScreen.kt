@@ -20,11 +20,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun ParentScreen(
-    openAndPopUp: (String, String) -> Unit,
     modifier: Modifier = Modifier,
+    familyUid: String = "",
+    openAndPopUp: (String, String) -> Unit,
     viewModel: ParentViewModel = hiltViewModel()
 ) {
-
+    viewModel.onFamilyChange(familyUid)
+    ParentScreenView(modifier = modifier)
 }
 
 @Composable

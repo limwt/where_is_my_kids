@@ -1,6 +1,7 @@
 package com.jeff.lim.wimk.screen.auth_key
 
 import androidx.compose.runtime.mutableStateOf
+import com.jeff.lim.wimk.WimkRoutes
 import com.jeff.lim.wimk.model.service.DatabaseService
 import com.jeff.lim.wimk.model.service.LogService
 import com.jeff.lim.wimk.screen.WimkViewModel
@@ -16,6 +17,10 @@ class AuthKeyViewModel @Inject constructor(
 
     private val authKey
         get() = uiState.value.authKey
+
+    fun onAuthKeyChange() {
+        uiState.value = uiState.value.copy(authKey = key())
+    }
 
     fun onKidRegister(familyUid: String) {
         launchCatching {
@@ -33,12 +38,14 @@ class AuthKeyViewModel @Inject constructor(
         }
     }
 
-    fun onCompleteClick(familyUid: String?, openAndPopUp: (String, String) -> Unit) {
-        familyUid?.let { uid ->
-            launchCatching {
-                // TODO : 부모의 자녀 관리 화면으로 이동...
-                //databaseService.updateAuthKey(uid, authKey)
-            }
-        }
+    fun onComplete(familyUid: String, openAndPopUp: (String, String, String) -> Unit) {
+        openAndPopUp(WimkRoutes.ParentScreen.name, WimkRoutes.AuthKeyScreen.name, familyUid)
+    }
+
+    private fun key(): String {
+        val charset = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        return (1..8)
+            .map { charset.random() }
+            .joinToString("")
     }
 }

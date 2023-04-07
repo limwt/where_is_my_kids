@@ -36,7 +36,7 @@ class WimkAppState(
     }
 
     fun navigateAndPopUp(route: String, popUp: String, arg: String = "") {
-        val destination = if (route == WimkRoutes.AuthKeyScreen.name) {
+        val destination = if (route == WimkRoutes.AuthKeyScreen.name || route == WimkRoutes.ParentScreen.name) {
             "$route/$arg"
         } else {
             route

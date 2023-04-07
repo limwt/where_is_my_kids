@@ -109,6 +109,14 @@ class DatabaseServiceImpl @Inject constructor(
         return result.asStateFlow()
     }
 
+    override suspend fun getCurrentFamilyWithUid(familyUid: String) {
+        database.getReference(DBPath.WIMK.path)
+            .child("${DBPath.Family.path}/$familyUid")
+            .get().addOnCompleteListener {
+                Timber.tag(logTag).d("getCurrentFamilyWithUid ${it.isSuccessful}, ${it.result}")
+            }.await()
+    }
+
     override suspend fun updateAuthKey(uid: String, key: String) {
         if (uid.isNotEmpty()) {
             Timber.tag(logTag).d("updateAuthKey $key, $uid")
@@ -131,10 +139,10 @@ class DatabaseServiceImpl @Inject constructor(
                     snapshot: DataSnapshot,
                     previousChildName: String?
                 ) {
-                    Timber.tag(logTag).d("onChildAdded: ${snapshot.value}")
                     // 자녀 추가...
                     snapshot.getValue(User::class.java)?.let { user ->
                         if (user.relation == RelationType.Son.relation || user.relation == RelationType.Daughter.relation) {
+                            Timber.tag(logTag).d("onChildAdded: ${snapshot.value.toString()}")
                             result.value = true
                         }
                     }

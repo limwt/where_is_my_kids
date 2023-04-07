@@ -1,6 +1,7 @@
 package com.jeff.lim.wimk.screen.login
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
 import com.jeff.lim.wimk.R
 import com.jeff.lim.wimk.WimkRoutes
 import com.jeff.lim.wimk.common.snack_bar.SnackBarManager
@@ -10,6 +11,7 @@ import com.jeff.lim.wimk.model.service.DatabaseService
 import com.jeff.lim.wimk.model.service.LogService
 import com.jeff.lim.wimk.screen.WimkViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,7 +38,7 @@ class LogInViewModel @Inject constructor(
     }
 
     fun onLogInClick(openAndPopUp: (String, String) -> Unit) {
-        launchCatching {
+        viewModelScope.launch {
             if (accountService.logIn(email, password)) {
                 databaseService.getCurrentFamily().collect { family ->
                     Timber.tag(logTag).d("onLoginClick - currentFamily $family")

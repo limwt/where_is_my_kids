@@ -22,6 +22,7 @@ import com.jeff.lim.wimk.common.snack_bar.SnackBarManager
 import com.jeff.lim.wimk.screen.auth_key.AuthKeyScreen
 import com.jeff.lim.wimk.screen.init.InitScreen
 import com.jeff.lim.wimk.screen.login.LogInScreen
+import com.jeff.lim.wimk.screen.parent.ParentScreen
 import com.jeff.lim.wimk.screen.register.RegisterScreen
 import com.jeff.lim.wimk.screen.sign_up.SignUpScreen
 import com.jeff.lim.wimk.ui.theme.WIMKTheme
@@ -102,6 +103,19 @@ fun NavGraphBuilder.wimkGraph(appState: WimkAppState) {
         // Retrieve the passed argument
         val familyUid = navBackStackEntry.arguments?.getString("familyUid")
         AuthKeyScreen(
+            familyUid = familyUid ?: "",
+            openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) }
+        )
+    }
+
+    composable(
+        route = "${WimkRoutes.ParentScreen.name}/{familyUid}",
+        arguments = listOf(
+            navArgument("familyUid") { type = NavType.StringType }
+        )
+    ) { navBackStackEntry ->
+        val familyUid = navBackStackEntry.arguments?.getString("familyUid")
+        ParentScreen(
             familyUid = familyUid ?: "",
             openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) }
         )

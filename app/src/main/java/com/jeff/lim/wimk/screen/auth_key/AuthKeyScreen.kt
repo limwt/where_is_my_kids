@@ -13,32 +13,34 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jeff.lim.wimk.common.composable.AuthKeyText
 import com.jeff.lim.wimk.common.composable.BasicText
 import com.jeff.lim.wimk.common.composable.BasicToolbar
-import com.jeff.lim.wimk.common.composable.EnableButton
-import com.jeff.lim.wimk.common.ext.basicButton
 import com.jeff.lim.wimk.R.string as AppText
 
 @Composable
 fun AuthKeyScreen(
     modifier: Modifier = Modifier,
     familyUid: String = "",
-    openAndPopUp: (String, String) -> Unit,
+    openAndPopUp: (String, String, String) -> Unit,
     viewModel: AuthKeyViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState
+    viewModel.onAuthKeyChange()
     viewModel.updateAuthKey(familyUid)
     viewModel.onKidRegister(familyUid)
+
+    if (uiState.kidAdded) {
+        viewModel.onComplete(familyUid, openAndPopUp)
+    }
+
     AuthKeyScreenView(
         modifier = modifier,
-        uiState = uiState,
-        onRegisterClick = { viewModel.onCompleteClick(familyUid, openAndPopUp) }
+        uiState = uiState
     )
 }
 
 @Composable
 private fun AuthKeyScreenView(
     modifier: Modifier,
-    uiState: AuthKeyUiState,
-    onRegisterClick: () -> Unit
+    uiState: AuthKeyUiState
 ) {
     BasicToolbar(title = AppText.add_kids)
 
@@ -70,12 +72,12 @@ private fun AuthKeyScreenView(
                 .padding(start = 16.dp, end = 16.dp, top = 20.dp)
         )
 
-        EnableButton(
+        /*EnableButton(
             text = AppText.add_kids,
             modifier = Modifier.basicButton(),
             action = onRegisterClick,
             enabled = uiState.kidAdded
-        )
+        )*/
     }
 }
 
@@ -145,7 +147,6 @@ Column(
 fun AuthKeyScreenPreview() {
     AuthKeyScreenView(
         modifier = Modifier,
-        uiState = AuthKeyUiState(),
-        onRegisterClick = {}
+        uiState = AuthKeyUiState()
     )
 }

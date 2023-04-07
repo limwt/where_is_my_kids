@@ -18,7 +18,7 @@
     <string name="auth_key">인증문자</string>
     <string name="register_error">사용자 등록에 실패했습니다. 입력하신 정보를 확인해 주세요.</string>
     <string name="add_kids">자녀 등록</string>
-    <string name="guide_add_kids">자녀의 스마트 폰에서 등록을 완료하면\n아래 저장 버튼을 눌러 주세요.</string>
+    <string name="guide_add_kids">자녀의 스마트 폰에서 등록을 완료하면\n등록된 자녀 목록 화면으로 이동합니다.</string>
 
 
     <string name="text_no_register">등록된 자녀가 없습니다.</string>
