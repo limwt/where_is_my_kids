@@ -35,8 +35,14 @@ class WimkAppState(
         navController.navigate(route) { launchSingleTop = true }
     }
 
-    fun navigateAndPopUp(route: String, popUp: String) {
-        navController.navigate(route) {
+    fun navigateAndPopUp(route: String, popUp: String, arg: String = "") {
+        val destination = if (route == WimkRoutes.AuthKeyScreen.name) {
+            "$route/$arg"
+        } else {
+            route
+        }
+
+        navController.navigate(destination) {
             launchSingleTop = true
             popUpTo(popUp) { inclusive = true }
         }
@@ -50,12 +56,12 @@ class WimkAppState(
     }
 
     fun navigateAndPopUpWithArguments(
-        argument: String,
         route: String,
-        popUp: String
+        popUp: String,
+        familyUid: String
     ) {
         // If argument is supplied, navigate using that argument
-        navController.navigate(route.plus(argument)) {
+        navController.navigate("$route/$familyUid") {
             launchSingleTop = true
             popUpTo(popUp) { inclusive = true }
         }

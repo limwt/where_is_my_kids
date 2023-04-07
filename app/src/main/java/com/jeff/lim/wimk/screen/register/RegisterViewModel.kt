@@ -47,7 +47,7 @@ class RegisterViewModel @Inject constructor(
         uiState.value = uiState.value.copy(relation = newValue)
     }
 
-    fun onRegisterClick(openAndPopUpWithArgument: (String, String, String) -> Unit) {
+    fun onRegisterClick(openAndPopUp: (String, String, String) -> Unit) {
         launchCatching {
             when (relation) {
                 RelationType.Dad.relation,
@@ -56,13 +56,11 @@ class RegisterViewModel @Inject constructor(
                     databaseService.getCurrentFamily().collect { family ->
                         Timber.tag(logTag).d("onLoginClick - currentFamily $family")
 
-                        if (family == null) {
-                            openAndPopUpWithArgument("", WimkRoutes.RegisterScreen.name, WimkRoutes.LogInScreen.name)
-                        } else {
-                            when (family.users[accountService.currentUserId]?.relation) {
+                        family?.let { fam ->
+                            when (fam.users[accountService.currentUserId]?.relation) {
                                 RelationType.Dad.relation,
                                 RelationType.Mom.relation -> {
-                                    openAndPopUpWithArgument(family.familyUid ?: "", WimkRoutes.AuthKeyScreen.name, WimkRoutes.RegisterScreen.name)
+                                    openAndPopUp(WimkRoutes.AuthKeyScreen.name, WimkRoutes.RegisterScreen.name, fam.familyUid ?: "")
                                 }
                                 RelationType.Son.relation,
                                 RelationType.Daughter.relation -> {

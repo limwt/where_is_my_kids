@@ -21,7 +21,7 @@ import com.jeff.lim.wimk.R.string as AppText
 
 @Composable
 fun RegisterScreen(
-    openAndPopUpWithArgument: (String, String, String) -> Unit,
+    openAndPopUp: (String, String, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
@@ -34,7 +34,7 @@ fun RegisterScreen(
         onPhoneNumberChange = viewModel::onPhoneNumberChange,
         onAuthKeyChange = viewModel::onAuthKeyChange,
         onRelationChange = viewModel::onRelationChange,
-        onRegisterClick = { viewModel.onRegisterClick(openAndPopUpWithArgument) }
+        onRegisterClick = { viewModel.onRegisterClick(openAndPopUp) }
     )
 }
 

@@ -13,9 +13,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.jeff.lim.wimk.common.snack_bar.SnackBarManager
 import com.jeff.lim.wimk.screen.auth_key.AuthKeyScreen
 import com.jeff.lim.wimk.screen.init.InitScreen
@@ -88,10 +90,20 @@ fun NavGraphBuilder.wimkGraph(appState: WimkAppState) {
     }
 
     composable(WimkRoutes.RegisterScreen.name) {
-        RegisterScreen(openAndPopUpWithArgument = { arg, route, popUp -> appState.navigateAndPopUpWithArguments(arg, route, popUp) })
+        RegisterScreen(openAndPopUp = { route, popUp, arg -> appState.navigateAndPopUp(route, popUp, arg) })
     }
 
-    composable(WimkRoutes.AuthKeyScreen.name) {
-        AuthKeyScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+    composable(
+        route = "${WimkRoutes.AuthKeyScreen.name}/{familyUid}",
+        arguments = listOf(
+            navArgument("familyUid") { type = NavType.StringType }
+        )
+    ) { navBackStackEntry ->
+        // Retrieve the passed argument
+        val familyUid = navBackStackEntry.arguments?.getString("familyUid")
+        AuthKeyScreen(
+            familyUid = familyUid ?: "",
+            openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) }
+        )
     }
 }

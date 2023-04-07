@@ -27,9 +27,18 @@ class AuthKeyViewModel @Inject constructor(
         }
     }
 
-    fun onCompleteClick(familyUid: String, openAndPopUp: (String, String) -> Unit) {
+    fun updateAuthKey(uid: String) {
         launchCatching {
-            databaseService.updateAuthKey(familyUid, authKey)
+            databaseService.updateAuthKey(uid, authKey)
+        }
+    }
+
+    fun onCompleteClick(familyUid: String?, openAndPopUp: (String, String) -> Unit) {
+        familyUid?.let { uid ->
+            launchCatching {
+                // TODO : 부모의 자녀 관리 화면으로 이동...
+                //databaseService.updateAuthKey(uid, authKey)
+            }
         }
     }
 }

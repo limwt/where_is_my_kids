@@ -2,7 +2,6 @@ package com.jeff.lim.wimk.model.service.impl
 
 import com.google.firebase.database.*
 import com.jeff.lim.wimk.database.DBPath
-import com.jeff.lim.wimk.database.FamilyModel
 import com.jeff.lim.wimk.database.RelationType
 import com.jeff.lim.wimk.model.Family
 import com.jeff.lim.wimk.model.User
@@ -47,18 +46,18 @@ class DatabaseServiceImpl @Inject constructor(
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.value != null) {
                         dataSnapshotLoop@ for (dataSnapshot in snapshot.children) {
+                            val family = dataSnapshot.getValue(Family::class.java)
                             Timber.tag(logTag).d("checkFamilyRoom - onDataChange : ${dataSnapshot.key} ${dataSnapshot.value}")
-                            Timber.tag(logTag).d("checkFamilyRoom - onRealDataChange : ${dataSnapshot.getValue(FamilyModel::class.java)}")
-                            dataSnapshot.getValue(Family::class.java)?.let { family ->
-                                for (user in family.users.entries) {
+                            Timber.tag(logTag).d("checkFamilyRoom - onRealDataChange : $family")
+
+                            if (family != null) {
+                                for (user in family.users) {
                                     if (user.key == auth.currentUserId) {
                                         familyUid = dataSnapshot.key
                                         val map = mutableMapOf<String, User>()
                                         map[user.key] = user.value
-                                        result.value = result.value?.copy(
-                                            familyUid = familyUid,
-                                            users = map
-                                        )
+                                        result.value = Family(familyUid = dataSnapshot.key, users = map)
+                                        break@dataSnapshotLoop
                                     }
                                 }
                             }
@@ -75,11 +74,13 @@ class DatabaseServiceImpl @Inject constructor(
     }
 
     override suspend fun updateAuthKey(uid: String, key: String) {
-        Timber.tag(logTag).d("updateAuthKey $key, $uid")
-        database.getReference(DBPath.WIMK.path)
-            .child("${DBPath.Family.path}/$uid")
-            .child(DBPath.Auth.path)
-            .setValue(key).await()
+        if (uid.isNotEmpty()) {
+            Timber.tag(logTag).d("updateAuthKey $key, $uid")
+            database.getReference(DBPath.WIMK.path)
+                .child("${DBPath.Family.path}/$uid")
+                .child(DBPath.Auth.path)
+                .setValue(key).await()
+        }
     }
 
     override suspend fun onKidRegister(): StateFlow<Boolean?> {
